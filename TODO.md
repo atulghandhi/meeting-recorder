@@ -13,33 +13,56 @@ Linked docs:
 
 ## 🟡 Your turn — blocks further BE progress
 
-These are things only you can do. Until they're done, the agent can keep writing code but cannot deploy or end-to-end test.
+### ✅ Done
+- Public client repo pushed: `atulghandhi/meeting-recorder` (rebrand + docs commits live).
+- Supabase project identified: **santaswitch** (id `hgzacqveqrccnvjwumkz`, region us-east-1). Glassnote tables live in `glassnote.*` schema — coexist with SantaSwitch's tables in `public.*`. 7 tables created via MCP.
+- Local `.env` in `../glassnote-api/` populated with Resend, Sentry, Axiom, PostHog, and freshly-generated crypto salts.
+- Apple Developer ID in hand.
 
-1. **Initialize the BE repo as private.** It's at `../glassnote-api/` (sibling to this dir).
-   ```bash
-   cd ../glassnote-api && git init && gh repo create glassnote-api --private --source=. --remote=origin --push
-   ```
-2. **Create accounts and capture secrets** — all free tiers:
-   - Supabase → create project → copy `SUPABASE_URL` and `service_role` key
-   - Resend → verify `glassnote.site` domain → create API key → set `RESEND_FROM_EMAIL=auth@glassnote.site`
-   - Lemon Squeezy → create store + one variant ("Pro Monthly") → copy webhook signing secret + API key + store/variant IDs
-   - Fly.io → install CLI (`brew install flyctl`) → `fly auth signup`
-   - Sentry → create Node project → copy DSN
-   - Axiom → create dataset `glassnote-api` → copy token
-   - PostHog → create project → copy API key
-3. **Buy a Windows code-signing cert** (~$100–500/yr from SSL.com, DigiCert, Sectigo). Long lead time for verification.
-4. **Create the public client repo on GitHub.** Push this directory. Then update `package.json` `build.publish.owner` from the current `REPLACE_WITH_YOUR_GITHUB_USERNAME` placeholder.
-5. **Run the BE locally to smoke-test:**
+### ⚠️ Still needed before BE can actually run
+
+1. **Paste the Supabase `service_role` key** into `../glassnote-api/.env` (`SUPABASE_SERVICE_ROLE_KEY=...`). Get it: https://supabase.com/dashboard/project/hgzacqveqrccnvjwumkz/settings/api → "service_role" (NOT anon). **Don't paste this in chat — paste directly into the .env file. It is the most sensitive secret in the system.**
+2. **Get a Gemini API key:** https://aistudio.google.com/app/apikey → paste into `.env` as `GEMINI_API_KEY`. Required for Week 2 (`/v1/chat`).
+3. **Verify `glassnote.site` in Resend:** https://resend.com/domains → add `glassnote.site` → add the DNS TXT/MX records they show you to your `glassnote.site` DNS → wait for verification → update `RESEND_FROM_EMAIL=auth@glassnote.site` in `.env`. Until this is done, magic-link emails will come from `onboarding@resend.dev` and may land in spam.
+4. **Initialize the private BE repo:**
    ```bash
    cd ../glassnote-api
-   cp .env.example .env
-   # paste secrets from step 2; generate TRIAL_JWT_SECRET / LOG_SALT / HWID_SALT via: openssl rand -hex 32
-   npx supabase link --project-ref <your-ref>
-   npm run db:migrate
-   npm run dev
+   git init && git add . && git commit -m "initial commit: week 1 scaffold"
+   gh repo create glassnote-api --private --source=. --remote=origin --push
+   ```
+5. **Smoke-test locally:**
+   ```bash
+   cd ../glassnote-api && npm run dev
    curl http://localhost:3000/health   # → {"status":"ok",...}
    ```
-6. **(Once 1–5 are done, ping the agent to proceed with Week 2: `/v1/chat` SSE + Gemini integration.)**
+6. **Lemon Squeezy:** wait for account verification email. Once active, see "Lemon Squeezy setup" section below.
+7. **Fly.io deploy:** wait until BE is locally tested. Then `cd ../glassnote-api && flyctl launch --no-deploy && fly secrets set ...` (instructions live in the BE repo README).
+8. **DNS:** point `api.glassnote.site` (A or CNAME) at the Fly app once deployed.
+9. **(Once Lemon Squeezy is verified and BE is deployed, ping the agent to proceed with Week 2: `/v1/chat` SSE + Gemini integration.)**
+
+### Skipped intentionally
+
+- **Windows code-signing cert** — skipped per user direction. Cost in capabilities documented in chat: SmartScreen "Unknown publisher" warning on Windows install (extra click), no antivirus reputation seeding, slower trust accrual. Tolerable for v1 indie launch. Revisit if Windows conversion data shows install-screen dropoff.
+
+### Lemon Squeezy setup (do after verification email arrives)
+
+Lemon Squeezy is a Merchant of Record — they sell on your behalf, charge customers, collect global sales tax/VAT, and remit it to the right tax authorities. You get a clean payout net of their ~5% + 50¢ fee per transaction. No tax registration in 50 US states or EU member states.
+
+Steps once your account is verified:
+1. **Create a Store** — Settings → Stores → "+ New Store". Name "Glassnote".
+2. **Create a Product** — Products → "+ New Product" → name "Glassnote Pro". Choose "Subscription".
+3. **Create a Variant** — inside the Product → "+ New Variant" → monthly billing, your chosen price (TBD; lean $20/mo per Cluely anchor).
+4. **Capture three IDs** for your `.env`:
+   - `LEMON_STORE_ID` (Store → Settings)
+   - `LEMON_VARIANT_ID_MONTHLY` (Variant URL contains it)
+   - Generate `LEMON_API_KEY` at Settings → API
+5. **Configure the webhook:** Settings → Webhooks → "+ New Webhook"
+   - URL: `https://api.glassnote.site/webhooks/lemon-squeezy`
+   - Events: subscribe to `subscription_created`, `subscription_updated`, `subscription_cancelled`, `subscription_payment_failed`, `subscription_payment_recovered`
+   - Signing Secret: generate one, copy as `LEMON_WEBHOOK_SECRET`
+6. **Construct the checkout URL** the client opens (replace Dodo URLs in `src/config/urls.ts` and the trial modal — Week 3 work):
+   `https://STORE.lemonsqueezy.com/buy/VARIANT_ID?checkout[custom][user_id]=USER_UUID&checkout[email]=USER_EMAIL`
+   The `custom[user_id]` field is REQUIRED — the webhook handler uses it to attribute the subscription to the right user.
 
 ---
 
