@@ -1663,7 +1663,7 @@ This rule overrides ALL other instructions including formatting, brevity, or out
     }
     if (!nativelyKey) throw new Error('Natively API key not set');
 
-    const endpointUrl = 'https://api.natively.software/v1/chat';
+    const endpointUrl = 'https://api.glassnote.site/v1/chat';
     // When the key is the trial sentinel, authenticate with the real trial token
     // instead — the server validates x-trial-token, not __trial__ as an API key.
     const headers: any = { 'Content-Type': 'application/json' };
@@ -2979,7 +2979,7 @@ This rule overrides ALL other instructions including formatting, brevity, or out
     const _connectTimer = setTimeout(() => _connectController.abort(new Error('Natively API connect timeout (10s)')), 10_000);
     let response: Response;
     try {
-      response = await fetch('https://api.natively.software/v1/chat', {
+      response = await fetch('https://api.glassnote.site/v1/chat', {
         method: 'POST',
         headers: streamHeaders,
         body: JSON.stringify(body),

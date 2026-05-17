@@ -1,8 +1,8 @@
 {
-  "name": "natively",
-  "version": "2.6.0",
+  "name": "glassnote",
+  "version": "0.1.0",
   "main": "dist-electron/electron/main.js",
-  "description": "Natively is a meeting notes app that uses AI to generate notes from your meetings.",
+  "description": "Glassnote is an AI meeting assistant and interview copilot. Fork of Natively (AGPL-3.0).",
   "scripts": {
     "clean": "rimraf dist dist-electron",
     "dev": "vite",
@@ -24,9 +24,9 @@
   },
   "build": {
     "generateUpdatesFilesForAllChannels": true,
-    "appId": "com.electron.meeting-notes",
+    "appId": "site.glassnote.app",
     "afterPack": "./scripts/ad-hoc-sign.js",
-    "productName": "Natively",
+    "productName": "Glassnote",
     "files": [
       "dist",
       "dist-electron",
@@ -81,8 +81,8 @@
       "identity": null,
       "hardenedRuntime": false,
       "extendInfo": {
-        "NSScreenCaptureUsageDescription": "Natively needs Screen Recording permission to capture system audio for meeting transcription.",
-        "NSMicrophoneUsageDescription": "Natively needs microphone access to transcribe your voice during meetings."
+        "NSScreenCaptureUsageDescription": "Glassnote needs Screen Recording permission to capture system audio for meeting transcription.",
+        "NSMicrophoneUsageDescription": "Glassnote needs microphone access to transcribe your voice during meetings."
       }
     },
     "win": {
@@ -132,8 +132,8 @@
     "publish": [
       {
         "provider": "github",
-        "owner": "Natively-AI-assistant",
-        "repo": "natively-cluely-ai-assistant",
+        "owner": "atulghandhi",
+        "repo": "meeting-recorder",
         "releaseType": "release"
       }
     ]
@@ -208,7 +208,6 @@
     "jspdf": "^4.0.0",
     "katex": "^0.16.27",
     "keytar": "^7.9.0",
-    "liquid-glass-react": "^1.1.1",
     "lucide-react": "^0.460.0",
     "mammoth": "^1.11.0",
     "onnxruntime-node": "1.22.0",

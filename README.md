@@ -962,6 +962,16 @@ Natively is a free, open-source alternative to:
 ---
 
 
+## License & Attribution
+
+This project is a fork of [Natively](https://github.com/Natively-AI-assistant/natively-cluely-ai-assistant) by evinjohnn, released under the **GNU Affero General Public License v3.0** ([LICENSE](LICENSE)).
+
+This fork is **independently maintained and not affiliated with, endorsed by, or supported by the original authors**. Issues, support requests, and feature requests for this fork should be directed here, not upstream.
+
+Per AGPL §13, the complete corresponding source code for any hosted version of this software is available at the repository linked above and from the in-app "Source" link.
+
+---
+
 ## Star History
 
 <a href="https://star-history.com/#evinjohnn/natively-cluely-ai-assistant&Date">
