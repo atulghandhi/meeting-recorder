@@ -160,11 +160,9 @@ Use a fixed scripted dialogue (record once, replay through `electron/test/erp-mo
 
 ## Telemetry to add (one-time)
 
-Lightweight per-turn JSON log line written to a local debug file (gated behind a settings toggle, off by default — privacy-respecting):
+Lightweight per-turn JSON log line written to a local debug file (gated behind a settings toggle, ON by default):
 
 ```
 { ts, turn_id, intent, ttft_ms, total_ms, input_tokens, cached_tokens,
   output_tokens, provider, model, speculative_fired, speculative_reused }
 ```
-
-Without this, every claim in this document is a guess.
