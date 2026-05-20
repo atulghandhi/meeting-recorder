@@ -142,14 +142,14 @@ const Launcher: React.FC<LauncherProps> = ({ onStartMeeting, onOpenSettings, onO
         }
 
         // Onboarding Check
-        const hasSeenModesOnboarding = localStorage.getItem('natively_seen_modes_onboarding_v5');
+        const hasSeenModesOnboarding = localStorage.getItem('glassnote_seen_modes_onboarding_v5');
         if (!hasSeenModesOnboarding) {
             setTimeout(() => {
                 if (mounted) setShowModesOnboarding(true);
             }, 8000); // Increased delay so it doesn't overlap with other startup notifications
         }
 
-        const hasSeenProfileOnboarding = localStorage.getItem('natively_seen_profile_onboarding_v1');
+        const hasSeenProfileOnboarding = localStorage.getItem('glassnote_seen_profile_onboarding_v1');
         if (!hasSeenProfileOnboarding && hasSeenModesOnboarding) {
             setTimeout(() => {
                 if (mounted) setShowProfileOnboarding(true);
@@ -431,7 +431,7 @@ const Launcher: React.FC<LauncherProps> = ({ onStartMeeting, onOpenSettings, onO
                         <button
                             onClick={() => {
                                 setShowProfileOnboarding(false);
-                                localStorage.setItem('natively_seen_profile_onboarding_v1', 'true');
+                                localStorage.setItem('glassnote_seen_profile_onboarding_v1', 'true');
                                 onOpenProfile?.();
                             }}
                             title="Profile Intelligence"
@@ -489,7 +489,7 @@ const Launcher: React.FC<LauncherProps> = ({ onStartMeeting, onOpenSettings, onO
                                                     onClick={(e) => { 
                                                         e.stopPropagation(); 
                                                         setShowProfileOnboarding(false); 
-                                                        localStorage.setItem('natively_seen_profile_onboarding_v1', 'true'); 
+                                                        localStorage.setItem('glassnote_seen_profile_onboarding_v1', 'true'); 
                                                     }}
                                                     className={`text-[12px] font-medium px-3.5 py-[6px] rounded-full transition-all active:scale-95 ${
                                                         isLight
@@ -504,7 +504,7 @@ const Launcher: React.FC<LauncherProps> = ({ onStartMeeting, onOpenSettings, onO
                                                         e.stopPropagation(); 
                                                         onOpenProfile?.(); 
                                                         setShowProfileOnboarding(false); 
-                                                        localStorage.setItem('natively_seen_profile_onboarding_v1', 'true'); 
+                                                        localStorage.setItem('glassnote_seen_profile_onboarding_v1', 'true'); 
                                                     }}
                                                     className={`text-[12px] font-medium px-4 py-[6px] rounded-full transition-all active:scale-95 shadow-sm ${
                                                         isLight
@@ -525,7 +525,7 @@ const Launcher: React.FC<LauncherProps> = ({ onStartMeeting, onOpenSettings, onO
                         <button
                             onClick={() => {
                                 setShowModesOnboarding(false);
-                                localStorage.setItem('natively_seen_modes_onboarding_v5', 'true');
+                                localStorage.setItem('glassnote_seen_modes_onboarding_v5', 'true');
                                 onOpenModes?.();
                             }}
                             title="Modes"
@@ -593,7 +593,7 @@ const Launcher: React.FC<LauncherProps> = ({ onStartMeeting, onOpenSettings, onO
                                                     onClick={(e) => { 
                                                         e.stopPropagation(); 
                                                         setShowModesOnboarding(false); 
-                                                        localStorage.setItem('natively_seen_modes_onboarding_v5', 'true'); 
+                                                        localStorage.setItem('glassnote_seen_modes_onboarding_v5', 'true'); 
                                                     }}
                                                     className={`text-[12px] font-medium px-3.5 py-[6px] rounded-full transition-all active:scale-95 ${
                                                         isLight
@@ -608,7 +608,7 @@ const Launcher: React.FC<LauncherProps> = ({ onStartMeeting, onOpenSettings, onO
                                                         e.stopPropagation(); 
                                                         onOpenModes?.(); 
                                                         setShowModesOnboarding(false); 
-                                                        localStorage.setItem('natively_seen_modes_onboarding_v5', 'true'); 
+                                                        localStorage.setItem('glassnote_seen_modes_onboarding_v5', 'true'); 
                                                     }}
                                                     className={`text-[12px] font-medium px-4 py-[6px] rounded-full transition-all active:scale-95 shadow-sm ${
                                                         isLight
@@ -677,7 +677,7 @@ const Launcher: React.FC<LauncherProps> = ({ onStartMeeting, onOpenSettings, onO
                                     {/* 1.5. Hero Header (Title + Controls + CTA) */}
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-4">
-                                            <h1 className="text-3xl font-celeb-light font-medium text-text-primary tracking-wide drop-shadow-sm">My Natively</h1>
+                                            <h1 className="text-3xl font-celeb-light font-medium text-text-primary tracking-wide drop-shadow-sm">My Glassnote</h1>
 
                                             {/* Refresh Button */}
                                             <button
@@ -767,7 +767,7 @@ const Launcher: React.FC<LauncherProps> = ({ onStartMeeting, onOpenSettings, onO
                                             onClick={() => {
                                                 if (isMeetingActive) {
                                                     // inactive=true: overlay appears on top but doesn't activate
-                                                    // the Natively app or steal OS focus — preserves stealth.
+                                                    // the Glassnote app or steal OS focus — preserves stealth.
                                                     // setWindowMode (not showWindow) is required because
                                                     // logo-click set currentWindowMode='launcher', so showWindow()
                                                     // would re-show the launcher rather than switch to overlay.
@@ -775,7 +775,7 @@ const Launcher: React.FC<LauncherProps> = ({ onStartMeeting, onOpenSettings, onO
                                                     analytics.trackCommandExecuted('resume_meeting_from_launcher');
                                                 } else {
                                                     onStartMeeting();
-                                                    analytics.trackCommandExecuted('start_natively_cta');
+                                                    analytics.trackCommandExecuted('start_glassnote_cta');
                                                 }
                                             }}
                                             whileHover={{ scale: 1.01, filter: 'brightness(1.1)' }}
@@ -834,7 +834,7 @@ const Launcher: React.FC<LauncherProps> = ({ onStartMeeting, onOpenSettings, onO
                                                             className="flex items-center gap-3"
                                                         >
                                                             <img src={icon} alt="Logo" className="w-[18px] h-[18px] object-contain brightness-0 invert drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)] opacity-90" />
-                                                            <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.1)] text-[20px] leading-none">Start Natively</span>
+                                                            <span className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.1)] text-[20px] leading-none">Start Glassnote</span>
                                                         </motion.div>
                                                     )}
                                                 </AnimatePresence>
@@ -844,7 +844,7 @@ const Launcher: React.FC<LauncherProps> = ({ onStartMeeting, onOpenSettings, onO
 
                                     {/* 2. Hero Section Cards */}
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3 h-[198px]">
-                                        {/* Default Intro — natively support & upcoming features.
+                                        {/* Default Intro — glassnote support & upcoming features.
                                             Calendar "Up Next" lives in Settings → Calendar, not here. */}
                                         <div className="md:col-span-2 h-full">
                                             <FeatureSpotlight />

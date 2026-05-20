@@ -9,7 +9,7 @@ import {
 import { SiOpenai, SiGoogle } from 'react-icons/si';
 import { useShortcuts } from '../../hooks/useShortcuts';
 import { useResolvedTheme } from '../../hooks/useResolvedTheme';
-import nativelyIcon from '../icon.png';
+import glassnoteIcon from '../icon.png';
 
 // ----------------------
 // Animations & Mocks
@@ -49,8 +49,8 @@ const MockAppInterface = () => {
                         {/* Logo Button */}
                         <div className="w-8 h-8 rounded-full bg-bg-item-active flex items-center justify-center border border-border-muted overflow-hidden">
                             <img
-                                src={nativelyIcon}
-                                alt="Natively"
+                                src={glassnoteIcon}
+                                alt="Glassnote"
                                 className="w-[20px] h-[20px] object-contain"
                                 style={{ filter: isLight ? 'brightness(0)' : 'brightness(0) invert(1)', opacity: 0.9 }}
                             />
@@ -257,7 +257,7 @@ const MockMeetingInterfaceAnim = () => {
                             </div>
                             <div className="flex items-start gap-3">
                                 <div className="mt-0.5 w-5 h-5 rounded-full bg-bg-input flex items-center justify-center border border-border-subtle shrink-0">
-                                    <img src={nativelyIcon} alt="AI" className="w-3 h-3 opacity-50 object-contain force-black-icon" />
+                                    <img src={glassnoteIcon} alt="AI" className="w-3 h-3 opacity-50 object-contain force-black-icon" />
                                 </div>
                                 <div>
                                     <div className="text-[10px] text-text-tertiary mb-1 font-medium">10:35 AM</div>
@@ -288,7 +288,7 @@ const MockMeetingChatAnim = () => {
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-border-subtle shrink-0">
                 <div className="flex items-center gap-2 text-text-tertiary">
-                    <img src={nativelyIcon} className="w-3.5 h-3.5 force-black-icon opacity-50" alt="logo" />
+                    <img src={glassnoteIcon} className="w-3.5 h-3.5 force-black-icon opacity-50" alt="logo" />
                     <span className="text-[13px] font-medium">Search this meeting</span>
                 </div>
                 <X size={16} className="text-text-tertiary" />
@@ -421,8 +421,8 @@ const MockPermissionsAnim = () => {
                 </div>
                 <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
-                        <img src={nativelyIcon} alt="Natively" className="w-6 h-6 object-contain rounded drop-shadow-sm opacity-90" />
-                        <span className="text-text-primary text-sm font-medium">Natively</span>
+                        <img src={glassnoteIcon} alt="Glassnote" className="w-6 h-6 object-contain rounded drop-shadow-sm opacity-90" />
+                        <span className="text-text-primary text-sm font-medium">Glassnote</span>
                     </div>
 
                     <motion.div
@@ -439,7 +439,7 @@ const MockPermissionsAnim = () => {
                 </div>
             </div>
             <div className="text-xs text-text-secondary text-center max-w-[280px]">
-                Natively requires Accessibility and Screen Recording permissions to analyze screen context.
+                Glassnote requires Accessibility and Screen Recording permissions to analyze screen context.
             </div>
         </div>
     );
@@ -460,7 +460,7 @@ const MockPillControlsAnim = () => {
             {/* Logo → Launcher */}
             <div className="flex items-center gap-3 p-3 bg-bg-elevated border border-border-subtle rounded-xl">
                 <div className="w-8 h-8 rounded-full bg-bg-item-active flex items-center justify-center border border-border-muted shrink-0 shadow-sm">
-                    <img src={nativelyIcon} alt="Logo" className="w-[18px] h-[18px] object-contain force-black-icon opacity-90" />
+                    <img src={glassnoteIcon} alt="Logo" className="w-[18px] h-[18px] object-contain force-black-icon opacity-90" />
                 </div>
                 <ArrowRight className="w-3.5 h-3.5 text-text-tertiary shrink-0" />
                 <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -596,7 +596,7 @@ const MockProviderSelectionAnim = () => {
     }, []);
 
     const options = [
-        { id: 'natively', label: 'Natively API', badge: '', recommended: true, desc: 'Ultra-fast low latency transcription', color: 'indigo', icon: <img src={nativelyIcon} className={`w-[14px] h-[14px] object-contain opacity-80 ${isLight ? '' : 'filter brightness-0 invert'}`} alt="Natively" /> },
+        { id: 'glassnote', label: 'Glassnote API', badge: '', recommended: true, desc: 'Ultra-fast low latency transcription', color: 'indigo', icon: <img src={glassnoteIcon} className={`w-[14px] h-[14px] object-contain opacity-80 ${isLight ? '' : 'filter brightness-0 invert'}`} alt="Glassnote" /> },
         { id: 'deepgram', label: 'Deepgram Nova-3', badge: 'Saved', recommended: false, desc: 'High-accuracy REST transcription', color: 'purple', icon: <Mic size={14} /> },
         { id: 'google', label: 'Google Cloud', badge: 'Saved', recommended: false, desc: 'gRPC streaming via Service Account', color: 'blue', icon: <Mic size={14} /> },
         { id: 'groq', label: 'Groq Whisper', badge: '', recommended: false, desc: 'Fast LPU whisper transcription', color: 'orange', icon: <Mic size={14} /> },
@@ -805,11 +805,11 @@ const SetupGuide = () => {
     const steps = [
         {
             title: 'Grant Permissions',
-            desc: 'Enable Screen Recording and Accessibility for Natively in macOS Privacy & Security.',
+            desc: 'Enable Screen Recording and Accessibility for Glassnote in macOS Privacy & Security.',
         },
         {
             title: 'Set Up Audio',
-            desc: 'Open Settings → Audio and select Natively API, or paste a Deepgram or Google key.',
+            desc: 'Open Settings → Audio and select Glassnote API, or paste a Deepgram or Google key.',
         },
         {
             title: 'Connect an AI Model',
@@ -835,7 +835,7 @@ const SetupGuide = () => {
         <div className="mb-10">
             <div className="mb-7">
                 <h3 className="text-[20px] font-bold text-text-primary tracking-tight leading-tight">Quick Start</h3>
-                <p className="text-[13px] text-text-tertiary mt-0.5">Get Natively running in four steps.</p>
+                <p className="text-[13px] text-text-tertiary mt-0.5">Get Glassnote running in four steps.</p>
             </div>
 
             <div>
@@ -884,7 +884,7 @@ export const HelpSettings: React.FC<{ onNavigate?: (tab: string) => void }> = ({
     const { shortcuts } = useShortcuts();
     const isLight = useResolvedTheme() === 'light';
 
-    // Kbd class applying theme variables natively
+    // Kbd class applying theme variables glassnote
     const kbdClass = `px-1.5 py-0.5 rounded text-[10px] font-mono border inline-block bg-bg-item-surface border-border-subtle text-text-secondary shadow-sm`;
 
     return (
@@ -895,7 +895,7 @@ export const HelpSettings: React.FC<{ onNavigate?: (tab: string) => void }> = ({
                     Help & Setup Guide
                 </h2>
                 <p className={`text-sm text-text-secondary mt-3 max-w-2xl`}>
-                    Learn how to deeply configure Natively. Everything from providing the right API scopes to executing conversational interviews seamlessly is covered below.
+                    Learn how to deeply configure Glassnote. Everything from providing the right API scopes to executing conversational interviews seamlessly is covered below.
                 </p>
             </div>
 
@@ -903,7 +903,7 @@ export const HelpSettings: React.FC<{ onNavigate?: (tab: string) => void }> = ({
 
                 {onNavigate && (
                     <div
-                        onClick={() => onNavigate('natively-api')}
+                        onClick={() => onNavigate('glassnote-api')}
                         className="mb-8 group cursor-pointer bg-bg-card hover:bg-bg-item-surface border border-border-subtle hover:border-white transition-all rounded-2xl flex items-center justify-between p-4 px-5 shadow-sm hover:shadow-md"
                     >
                         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 flex-1">
@@ -913,7 +913,7 @@ export const HelpSettings: React.FC<{ onNavigate?: (tab: string) => void }> = ({
                             <div className="flex-1">
                                 <h4 className="text-[14px] font-bold text-text-primary mb-0.5">Want to skip the manual setup?</h4>
                                 <p className="text-[13px] text-text-secondary">
-                                    Use the <span className="font-semibold text-text-primary">Natively API</span> for an out-of-the-box experience. One-click zero-configuration usage.
+                                    Use the <span className="font-semibold text-text-primary">Glassnote API</span> for an out-of-the-box experience. One-click zero-configuration usage.
                                 </p>
                             </div>
                         </div>
@@ -932,7 +932,7 @@ export const HelpSettings: React.FC<{ onNavigate?: (tab: string) => void }> = ({
 
                 <AccordionSection title="1. App Permissions Setup" icon={<Monitor className="w-4 h-4" />}>
                     <div className="space-y-4">
-                        <p>Natively operates entirely on-device, but requires OS permissions to tap into your screen context and global keystrokes. Here is how your system should look:</p>
+                        <p>Glassnote operates entirely on-device, but requires OS permissions to tap into your screen context and global keystrokes. Here is how your system should look:</p>
                         <MockPermissionsAnim />
                         <div className="space-y-3 mt-4">
                             <h4 className="font-bold text-base text-text-primary border-b border-border-subtle pb-2">Hardware & Engine Configurations</h4>
@@ -942,7 +942,7 @@ export const HelpSettings: React.FC<{ onNavigate?: (tab: string) => void }> = ({
                                     <Mic size={14} className="text-blue-500" /> Microphone & Speaker Loopback Selection
                                 </h5>
                                 <p className="text-[11px] opacity-90 leading-relaxed text-text-secondary">
-                                    Natively can capture both what you say and what you hear globally. At the top of the Audio Settings, use the Dropdowns to explicitly select your hardware Input (e.g. your physical microphone) and Output capture (what the speakers play). By default, Natively utilizes the <strong>System Default</strong>, so audio routing will automatically follow your OS preferences.
+                                    Glassnote can capture both what you say and what you hear globally. At the top of the Audio Settings, use the Dropdowns to explicitly select your hardware Input (e.g. your physical microphone) and Output capture (what the speakers play). By default, Glassnote utilizes the <strong>System Default</strong>, so audio routing will automatically follow your OS preferences.
                                 </p>
                             </div>
 
@@ -980,7 +980,7 @@ export const HelpSettings: React.FC<{ onNavigate?: (tab: string) => void }> = ({
                                 <h4 className={`font-semibold text-sm mb-2 text-text-primary flex items-center gap-2`}>
                                     <Monitor className="w-4 h-4 text-accent-primary" /> Screen Recording
                                 </h4>
-                                <p className="text-xs opacity-90 mb-2">Provides Natively the ability to read your screen temporarily when you capture context.</p>
+                                <p className="text-xs opacity-90 mb-2">Provides Glassnote the ability to read your screen temporarily when you capture context.</p>
                                 <p className="text-[11px] text-text-tertiary">System Settings &gt; Privacy & Security &gt; Screen Recording</p>
                             </div>
 
@@ -988,7 +988,7 @@ export const HelpSettings: React.FC<{ onNavigate?: (tab: string) => void }> = ({
                                 <h4 className={`font-semibold text-sm mb-2 text-text-primary flex items-center gap-2`}>
                                     <Command className="w-4 h-4 text-purple-500" /> Accessibility
                                 </h4>
-                                <p className="text-xs opacity-90 mb-2">Required for Natively to detect the global keyboard shortcuts below, regardless of what window is focused.</p>
+                                <p className="text-xs opacity-90 mb-2">Required for Glassnote to detect the global keyboard shortcuts below, regardless of what window is focused.</p>
                                 <p className="text-[11px] text-text-tertiary">System Settings &gt; Privacy & Security &gt; Accessibility</p>
                             </div>
                         </div>
@@ -997,7 +997,7 @@ export const HelpSettings: React.FC<{ onNavigate?: (tab: string) => void }> = ({
 
                 <AccordionSection title="2. Audio STT Providers Setup (Microphone)" icon={<Mic className="w-4 h-4" />}>
                     <div className="space-y-6">
-                        <p>Natively supports over 8 different Audio engines to transcribe what you hear and say. From the Audio tab in settings, use the overarching dropdown to switch the active engine.</p>
+                        <p>Glassnote supports over 8 different Audio engines to transcribe what you hear and say. From the Audio tab in settings, use the overarching dropdown to switch the active engine.</p>
 
                         <MockProviderSelectionAnim />
 
@@ -1099,7 +1099,7 @@ export const HelpSettings: React.FC<{ onNavigate?: (tab: string) => void }> = ({
 
                 <AccordionSection title="3. AI Providers & Prompt Engine" icon={<Key className="w-4 h-4" />}>
                     <div className="space-y-4">
-                        <p className="text-sm">Natively uses Large Language Models (LLMs) to reason about your screen and audio context. You can configure cloud providers, local models, or fully custom endpoints.</p>
+                        <p className="text-sm">Glassnote uses Large Language Models (LLMs) to reason about your screen and audio context. You can configure cloud providers, local models, or fully custom endpoints.</p>
 
                         <div className="space-y-3 pt-2">
                             <h4 className="font-bold text-lg text-text-primary border-b border-border-subtle pb-2">1. Standard Cloud Providers</h4>
@@ -1152,7 +1152,7 @@ export const HelpSettings: React.FC<{ onNavigate?: (tab: string) => void }> = ({
                                     <Zap className="w-4 h-4 text-accent-primary" />
                                 </div>
                                 <p className="text-[11px] text-text-secondary leading-relaxed mt-0.5">
-                                    <strong className="text-text-primary font-bold">Autonomous Registry Sync:</strong> Natively utilizes a 14-day background sync clock (<span className="font-mono bg-bg-elevated border border-border-muted px-1.5 py-0.5 rounded text-[10px] text-text-primary shadow-[inset_0_-1px_0_rgba(0,0,0,0.1)]">v2/api/models</span>) to silently poll upstream APIs. If Anthropic or OpenAI drops a new flagship architecture (e.g. GPT-5), your app dynamically absorbs it into the UI dropdown automatically.
+                                    <strong className="text-text-primary font-bold">Autonomous Registry Sync:</strong> Glassnote utilizes a 14-day background sync clock (<span className="font-mono bg-bg-elevated border border-border-muted px-1.5 py-0.5 rounded text-[10px] text-text-primary shadow-[inset_0_-1px_0_rgba(0,0,0,0.1)]">v2/api/models</span>) to silently poll upstream APIs. If Anthropic or OpenAI drops a new flagship architecture (e.g. GPT-5), your app dynamically absorbs it into the UI dropdown automatically.
                                 </p>
                             </div>
 
@@ -1168,7 +1168,7 @@ export const HelpSettings: React.FC<{ onNavigate?: (tab: string) => void }> = ({
                             <h4 className="font-bold text-lg text-text-primary border-b border-border-subtle pb-2">2. Local Models (Ollama)</h4>
                             <div className="p-4 rounded-xl border bg-bg-item-surface border-border-subtle space-y-3">
                                 <p className="text-xs opacity-90 leading-relaxed text-text-secondary">
-                                    You can run Natively completely offline with 100% data privacy using Ollama. Natively automatically scans <span className={kbdClass}>http://localhost:11434</span> for active models.
+                                    You can run Glassnote completely offline with 100% data privacy using Ollama. Glassnote automatically scans <span className={kbdClass}>http://localhost:11434</span> for active models.
                                 </p>
                                 <ol className="list-decimal pl-4 text-xs space-y-2 opacity-90 text-text-secondary">
                                     <li>Download Ollama locally via <button onClick={() => { (window as any).electronAPI?.openExternal('https://ollama.com/download') }} className="text-accent-primary hover:underline inline-flex items-center gap-1 font-medium">ollama.com <ExternalLink size={10} /></button></li>
@@ -1176,10 +1176,10 @@ export const HelpSettings: React.FC<{ onNavigate?: (tab: string) => void }> = ({
                                         Open Terminal and run our recommended 8B parameter instruction model:
                                         <div className="mt-1 bg-bg-input p-2 rounded border border-border-subtle font-mono text-[11px]">ollama run llama3:8b</div>
                                     </li>
-                                    <li>Alternatively, for faster generation without GPU, use Microsoft's smaller model:
+                                    <li>Alterglassnote, for faster generation without GPU, use Microsoft's smaller model:
                                         <div className="mt-1 bg-bg-input p-2 rounded border border-border-subtle font-mono text-[11px]">ollama run phi3</div>
                                     </li>
-                                    <li>Return to Natively's AI Providers overlay, and you will see your Local models ready for usage.</li>
+                                    <li>Return to Glassnote's AI Providers overlay, and you will see your Local models ready for usage.</li>
                                 </ol>
                             </div>
                         </div>
@@ -1200,7 +1200,7 @@ export const HelpSettings: React.FC<{ onNavigate?: (tab: string) => void }> = ({
                                 <div className="flex items-start gap-2 mt-2">
                                     <div className="w-5 h-5 rounded bg-orange-500/20 text-orange-500 flex items-center justify-center shrink-0 mt-0.5"><Zap size={10} /></div>
                                     <div className="text-xs text-text-secondary leading-relaxed">
-                                        <strong>Crucial: The Response Path.</strong> You must inform Natively how to parse the JSON text back. Deeply nested outputs must define the exact path array. For OpenAI/OpenRouter compliant endpoints, this is strictly: <span className={kbdClass}>choices[0].message.content</span>.
+                                        <strong>Crucial: The Response Path.</strong> You must inform Glassnote how to parse the JSON text back. Deeply nested outputs must define the exact path array. For OpenAI/OpenRouter compliant endpoints, this is strictly: <span className={kbdClass}>choices[0].message.content</span>.
                                     </div>
                                 </div>
                             </div>
@@ -1209,9 +1209,9 @@ export const HelpSettings: React.FC<{ onNavigate?: (tab: string) => void }> = ({
                     </div>
                 </AccordionSection>
 
-                <AccordionSection title="4. Natively Interface Operations" icon={<Monitor className="w-4 h-4" />}>
+                <AccordionSection title="4. Glassnote Interface Operations" icon={<Monitor className="w-4 h-4" />}>
                     <div className="space-y-6">
-                        <p className="text-[13px]">When initialized, Natively hides itself visually while remaining active as a persistent translucent overlay. This is your command center.</p>
+                        <p className="text-[13px]">When initialized, Glassnote hides itself visually while remaining active as a persistent translucent overlay. This is your command center.</p>
 
                         <div className="relative w-full flex flex-col p-2 sm:p-5 bg-bg-main rounded-[26px] border border-border-subtle shadow-inner">
                             <MockAppInterface />
@@ -1304,7 +1304,7 @@ export const HelpSettings: React.FC<{ onNavigate?: (tab: string) => void }> = ({
                                     <FileText className="w-4 h-4 text-blue-500 group-hover:scale-110 transition-transform" /> Summary Execution
                                 </h4>
                                 <p className="text-[12px] text-text-secondary leading-relaxed">
-                                    Natively fires a local background job as soon as the meeting finishes to compress the entire raw audio transcript into clean, formatted markdown representing structural overviews and explicit action items.
+                                    Glassnote fires a local background job as soon as the meeting finishes to compress the entire raw audio transcript into clean, formatted markdown representing structural overviews and explicit action items.
                                 </p>
                             </div>
 
@@ -1360,7 +1360,7 @@ export const HelpSettings: React.FC<{ onNavigate?: (tab: string) => void }> = ({
 
                 <AccordionSection title="6. Global Search & Shortcuts" icon={<Search className="w-4 h-4" />}>
                     <div className="space-y-6">
-                        <p className="text-[13px]">Hit <span className={kbdClass}>Cmd+K</span> anywhere on your computer to invoke the Natively Global Palette. This acts as your Spotlight overlay for interacting directly with the system backbone.</p>
+                        <p className="text-[13px]">Hit <span className={kbdClass}>Cmd+K</span> anywhere on your computer to invoke the Glassnote Global Palette. This acts as your Spotlight overlay for interacting directly with the system backbone.</p>
 
                         <MockSearchPillAnim />
 
@@ -1386,7 +1386,7 @@ export const HelpSettings: React.FC<{ onNavigate?: (tab: string) => void }> = ({
 
                         <div className="border-t border-border-subtle pt-6">
                             <h4 className="font-bold text-sm text-text-primary border-b border-border-subtle pb-1">Global System Shortcuts</h4>
-                            <p className="text-[11px] text-text-secondary mt-1 mb-3">These hotkeys work anywhere on your operating system, regardless of whether Natively is focused or completely hidden. Change them via <strong>Settings &gt; Hotkeys</strong>.</p>
+                            <p className="text-[11px] text-text-secondary mt-1 mb-3">These hotkeys work anywhere on your operating system, regardless of whether Glassnote is focused or completely hidden. Change them via <strong>Settings &gt; Hotkeys</strong>.</p>
 
                             <div className="grid gap-3">
                                 <div className="flex items-center justify-between p-4 rounded-xl border bg-bg-item-surface border-border-subtle group">
@@ -1426,7 +1426,7 @@ export const HelpSettings: React.FC<{ onNavigate?: (tab: string) => void }> = ({
                                         </div>
                                         <div>
                                             <div className="font-semibold text-sm text-text-primary">Process Captured Context (Execute)</div>
-                                            <div className="text-xs text-text-secondary mt-1">Triggers Natively to analyze the captured screenshots and text from the rolling buffer.</div>
+                                            <div className="text-xs text-text-secondary mt-1">Triggers Glassnote to analyze the captured screenshots and text from the rolling buffer.</div>
                                         </div>
                                     </div>
                                     <div className="flex gap-1 shrink-0">
@@ -1485,10 +1485,10 @@ export const HelpSettings: React.FC<{ onNavigate?: (tab: string) => void }> = ({
                                         <CreditCard className="w-4 h-4 text-accent-primary" /> Pro Requirement
                                     </h4>
                                     <p className="text-[11px] text-text-secondary mb-2">
-                                        This is a Natively Pro feature.
+                                        This is a Glassnote Pro feature.
                                     </p>
                                     <ol className="text-[11px] text-text-secondary space-y-1 list-decimal pl-4 mb-0">
-                                        <li>Get a License at <button onClick={() => { (window as any).electronAPI?.openExternal('https://natively.software/') }} className="text-accent-primary hover:underline font-semibold">natively.software</button></li>
+                                        <li>Get a License at <button onClick={() => { (window as any).electronAPI?.openExternal('https://glassnote.software/') }} className="text-accent-primary hover:underline font-semibold">glassnote.software</button></li>
                                         <li>Drop your Resume PDF in the UI to activate injection.</li>
                                     </ol>
                                 </div>
@@ -1501,7 +1501,7 @@ export const HelpSettings: React.FC<{ onNavigate?: (tab: string) => void }> = ({
                                     <Briefcase size={14} /> Job Description Targeting
                                 </h4>
                                 <p className="text-[11px] text-text-secondary leading-relaxed mb-0">
-                                    Drop a target <strong>JD PDF</strong> alongside your resume. Natively extracts the role title, level, company, and required technologies, then biases every prompt to align your responses with that exact spec — perfect for staying on-message during a final loop.
+                                    Drop a target <strong>JD PDF</strong> alongside your resume. Glassnote extracts the role title, level, company, and required technologies, then biases every prompt to align your responses with that exact spec — perfect for staying on-message during a final loop.
                                 </p>
                             </div>
 
@@ -1562,7 +1562,7 @@ export const HelpSettings: React.FC<{ onNavigate?: (tab: string) => void }> = ({
 
                 <AccordionSection title="8. Modes Manager" icon={<LayoutGrid className="w-4 h-4" />}>
                     <div className="space-y-6">
-                        <p className="text-[13px]">Modes let you assign a specialized AI persona to your session. Each mode has a tailored system prompt, a personal context area, reference files, and smart note template sections — so Natively behaves differently depending on whether you're in a sales call, a coding interview, or a team standup.</p>
+                        <p className="text-[13px]">Modes let you assign a specialized AI persona to your session. Each mode has a tailored system prompt, a personal context area, reference files, and smart note template sections — so Glassnote behaves differently depending on whether you're in a sales call, a coding interview, or a team standup.</p>
 
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                             {([
@@ -1588,7 +1588,7 @@ export const HelpSettings: React.FC<{ onNavigate?: (tab: string) => void }> = ({
                                     <ul className="text-[11px] text-text-secondary space-y-1 list-disc pl-4">
                                         <li>Click the <strong>grid icon</strong> in the Launcher header</li>
                                         <li>Or click the grid icon in the main interface toolbar</li>
-                                        <li>Requires a Natively Pro license</li>
+                                        <li>Requires a Glassnote Pro license</li>
                                     </ul>
                                 </div>
                                 <div className="p-4 rounded-xl border bg-bg-item-surface border-border-subtle">
@@ -1626,7 +1626,7 @@ export const HelpSettings: React.FC<{ onNavigate?: (tab: string) => void }> = ({
                                 <Star size={14} /> Pro Feature
                             </h4>
                             <p className="text-[11px] text-text-secondary leading-relaxed mb-0">
-                                Modes are locked behind Natively Pro. Free and trial users see only the General mode. Activate a license via <strong>Settings → Natively API</strong> to unlock all seven modes.
+                                Modes are locked behind Glassnote Pro. Free and trial users see only the General mode. Activate a license via <strong>Settings → Glassnote API</strong> to unlock all seven modes.
                             </p>
                         </div>
                     </div>
@@ -1641,7 +1641,7 @@ export const HelpSettings: React.FC<{ onNavigate?: (tab: string) => void }> = ({
                                     <Calendar size={14} /> What is Calendar Intelligence?
                                 </h4>
                                 <p className="text-[11px] text-text-secondary leading-relaxed mb-0">
-                                    By connecting your Google Calendar directly to Natively, the AI automatically gains context on your upcoming meetings, syncs the event data, and reads attendee lists to hyper-personalize your interactions.
+                                    By connecting your Google Calendar directly to Glassnote, the AI automatically gains context on your upcoming meetings, syncs the event data, and reads attendee lists to hyper-personalize your interactions.
                                 </p>
                             </div>
 
@@ -1651,13 +1651,13 @@ export const HelpSettings: React.FC<{ onNavigate?: (tab: string) => void }> = ({
                                     <ul className="text-[11px] text-text-secondary space-y-1 list-disc pl-4">
                                         <li>Navigate to the <strong>Calendar</strong> tab in settings.</li>
                                         <li>Click <strong>Connect Google Calendar</strong> and authenticate securely.</li>
-                                        <li>Natively will quietly background-sync your schedule.</li>
+                                        <li>Glassnote will quietly background-sync your schedule.</li>
                                     </ul>
                                 </div>
                                 <div className="p-4 rounded-xl border bg-bg-item-surface border-border-subtle">
                                     <h4 className="font-semibold text-sm mb-2 text-text-primary">Follow-Up System</h4>
                                     <p className="text-[11px] text-text-secondary">
-                                        When tracking live meetings, Natively uses the connected calendar context to instantly figure out <strong>who you are talking to</strong>. This powers the Follow-Up Email system, letting you auto-draft post-meeting notes to confirmed attendees.
+                                        When tracking live meetings, Glassnote uses the connected calendar context to instantly figure out <strong>who you are talking to</strong>. This powers the Follow-Up Email system, letting you auto-draft post-meeting notes to confirmed attendees.
                                     </p>
                                 </div>
                                 <div className="p-4 rounded-xl border bg-bg-item-surface border-border-subtle">
@@ -1703,10 +1703,10 @@ export const HelpSettings: React.FC<{ onNavigate?: (tab: string) => void }> = ({
                     <div className="space-y-4">
                         <div className="p-3 bg-sky-500/10 border border-sky-500/20 rounded-xl mb-2">
                             <h4 className="text-[13px] font-semibold text-sky-400 flex items-center gap-2 mb-1">
-                                <Smartphone size={14} /> Stream Natively to Your Phone
+                                <Smartphone size={14} /> Stream Glassnote to Your Phone
                             </h4>
                             <p className="text-[11px] text-text-secondary leading-relaxed mb-0">
-                                Phone Mirror spins up a small local web server so you can watch Natively's live transcript and AI answers from your phone or tablet — handy when your screen is being shared and you don't want the overlay visible.
+                                Phone Mirror spins up a small local web server so you can watch Glassnote's live transcript and AI answers from your phone or tablet — handy when your screen is being shared and you don't want the overlay visible.
                             </p>
                         </div>
 
@@ -1746,7 +1746,7 @@ export const HelpSettings: React.FC<{ onNavigate?: (tab: string) => void }> = ({
                                 <Ghost size={14} /> Process Disguise & Undetectability
                             </h4>
                             <p className="text-[11px] text-text-secondary leading-relaxed mb-0">
-                                Natively is heavily geared towards power users seeking minimalistic operation. The process completely disguises itself and remains undetectable/invisible to standard screen-recording applications and desktop sharing utilities.
+                                Glassnote is heavily geared towards power users seeking minimalistic operation. The process completely disguises itself and remains undetectable/invisible to standard screen-recording applications and desktop sharing utilities.
                             </p>
                         </div>
 
@@ -1769,7 +1769,7 @@ export const HelpSettings: React.FC<{ onNavigate?: (tab: string) => void }> = ({
                                 </p>
                                 <div className="p-2 border border-orange-500/20 bg-orange-500/5 rounded-lg">
                                     <p className="text-[10px] text-orange-400 m-0">
-                                        <strong>⚠️ Warning:</strong> This renders the Natively overlay completely unclickable. You MUST memorize the Global Hotkeys (e.g. <strong>Cmd+Shift+Arrows</strong> to move, <strong>Cmd+B</strong> to hide, <strong>Cmd+1-7</strong> for actions) to control the application once this is active.
+                                        <strong>⚠️ Warning:</strong> This renders the Glassnote overlay completely unclickable. You MUST memorize the Global Hotkeys (e.g. <strong>Cmd+Shift+Arrows</strong> to move, <strong>Cmd+B</strong> to hide, <strong>Cmd+1-7</strong> for actions) to control the application once this is active.
                                     </p>
                                 </div>
                             </div>

@@ -5,7 +5,7 @@ import {
     Shield
 } from 'lucide-react';
 import { useResolvedTheme } from '../../hooks/useResolvedTheme';
-import { NativelyLogoMark } from '../NativelyLogoMark';
+import { GlassnoteLogoMark } from '../GlassnoteLogoMark';
 
 // ─── Card wrapper ────────────────────────────────────────────
 function Card({ children, className = '' }: { children: React.ReactNode; className?: string }) {
@@ -16,7 +16,7 @@ function Card({ children, className = '' }: { children: React.ReactNode; classNa
     );
 }
 
-export const NativelyProSettings: React.FC = () => {
+export const GlassnoteProSettings: React.FC = () => {
     const isLight = useResolvedTheme() === 'light';
     const [licenseKey, setLicenseKey] = useState('');
     const [hardwareId, setHardwareId] = useState('');
@@ -105,7 +105,7 @@ export const NativelyProSettings: React.FC = () => {
         <div className="space-y-4 animated fadeIn">
             {/* Page title */}
             <div>
-                <h3 className="text-[15px] font-semibold text-text-primary tracking-[-0.01em]">Natively Pro</h3>
+                <h3 className="text-[15px] font-semibold text-text-primary tracking-[-0.01em]">Glassnote Pro</h3>
                 <p className="text-[12px] text-text-tertiary mt-0.5 leading-snug">
                     Profile Engine &amp; Job Description Intelligence
                 </p>
@@ -119,7 +119,7 @@ export const NativelyProSettings: React.FC = () => {
                         </div>
                         <h2 className="text-[18px] font-semibold tracking-tight text-text-primary">Pro License Active</h2>
                         <p className="text-[13px] mt-2 max-w-[280px] mx-auto leading-relaxed mb-8 text-text-secondary">
-                            Your device is fully authorized for Natively's premium features including the Profile Engine, Job Description Intelligence, and Company Research.
+                            Your device is fully authorized for Glassnote's premium features including the Profile Engine, Job Description Intelligence, and Company Research.
                         </p>
 
                         <button
@@ -140,9 +140,9 @@ export const NativelyProSettings: React.FC = () => {
                             {/* Header */}
                             <div className="flex flex-col items-center text-center mb-6">
                                 <div className="w-12 h-12 rounded-[14px] bg-yellow-500/10 border border-yellow-500/20 shadow-[inset_0_1px_rgba(255,255,255,0.06),0_2px_10px_rgba(0,0,0,0.05)] flex items-center justify-center mb-4 relative">
-                                    <NativelyLogoMark size={24} className="text-white drop-shadow-sm" />
+                                    <GlassnoteLogoMark size={24} className="text-white drop-shadow-sm" />
                                 </div>
-                                <h2 className="text-[17px] font-bold tracking-tight text-text-primary">Unlock Natively Pro</h2>
+                                <h2 className="text-[17px] font-bold tracking-tight text-text-primary">Unlock Glassnote Pro</h2>
                                 <p className="text-[12.5px] mt-1.5 leading-relaxed text-text-secondary max-w-[260px]">Supercharge your workflow with advanced intelligence and candidate insights.</p>
                             </div>
 
@@ -208,7 +208,7 @@ export const NativelyProSettings: React.FC = () => {
                             {/* Demo link */}
                             <div className="mt-4 flex justify-center pt-3 border-t border-border-subtle">
                                 <button 
-                                    onClick={() => window.electronAPI?.openExternal?.('https://natively.software/pro')}
+                                    onClick={() => window.electronAPI?.openExternal?.('https://glassnote.software/pro')}
                                     className="text-[12px] font-medium flex items-center gap-1.5 transition-all duration-200 text-blue-400 hover:text-blue-300 cursor-pointer"
                                 >
                                     <PlayCircle size={14} /> 
@@ -276,7 +276,7 @@ export const NativelyProSettings: React.FC = () => {
                                 <p className="text-[10.5px] text-text-tertiary leading-relaxed text-center pt-1">
                                     By activating, you agree to our{' '}
                                     <span
-                                        onClick={() => openExternal('https://natively.software/nativelypro/t&c')}
+                                        onClick={() => openExternal('https://glassnote.software/glassnotepro/t&c')}
                                         className="text-text-secondary hover:text-text-primary underline decoration-border-subtle underline-offset-[3px] cursor-pointer transition-colors"
                                     >
                                         Terms &amp; Conditions
@@ -296,7 +296,7 @@ export const NativelyProSettings: React.FC = () => {
                         <Shield size={18} className="text-amber-400" />
                     </div>
                     <div className="min-w-0">
-                        <p className="text-[13px] font-semibold text-text-primary">Refund Policy — Natively Pro</p>
+                        <p className="text-[13px] font-semibold text-text-primary">Refund Policy — Glassnote Pro</p>
                         <p className="text-[11px] text-text-tertiary leading-snug mt-0.5">
                             Please try the Free Trial first
                         </p>
@@ -309,7 +309,7 @@ export const NativelyProSettings: React.FC = () => {
                     <div className="space-y-3">
                         <div className="rounded-xl bg-bg-input/50 border border-border-subtle px-3.5 py-3">
                             <p className="text-[11.5px] text-text-secondary leading-relaxed">
-                                <strong className="text-text-primary font-semibold">A quick heads-up:</strong> Natively is built and maintained by a single developer and integrates a lot of third-party services — AI providers, speech-to-text engines, search APIs, payments, OS-level audio &amp; screen capture. That gives Pro a lot of capability, but the surface area is wider than a typical closed-source app, and once in a while something may not behave exactly as expected. If that happens, please <em>report it</em> rather than disputing the charge — we read every report and fixes typically land in the next update.
+                                <strong className="text-text-primary font-semibold">A quick heads-up:</strong> Glassnote is built and maintained by a single developer and integrates a lot of third-party services — AI providers, speech-to-text engines, search APIs, payments, OS-level audio &amp; screen capture. That gives Pro a lot of capability, but the surface area is wider than a typical closed-source app, and once in a while something may not behave exactly as expected. If that happens, please <em>report it</em> rather than disputing the charge — we read every report and fixes typically land in the next update.
                             </p>
                         </div>
 
@@ -325,17 +325,17 @@ export const NativelyProSettings: React.FC = () => {
                         <p className="text-[11.5px] text-text-secondary leading-relaxed">
                             For everything else — the 1-hour pre-activation window, subscription handling, taxes &amp; fees, and your local consumer rights — please see our full{' '}
                             <span
-                                onClick={() => openExternal('https://natively.software/refundpolicy')}
+                                onClick={() => openExternal('https://glassnote.software/refundpolicy')}
                                 className="text-text-primary hover:text-text-secondary underline decoration-border-subtle underline-offset-[3px] cursor-pointer transition-colors"
                             >
                                 Refund Policy
                             </span>
                             . Have a question before buying? Email{' '}
                             <span
-                                onClick={() => openExternal('mailto:natively.contact@gmail.com')}
+                                onClick={() => openExternal('mailto:glassnote.contact@gmail.com')}
                                 className="text-text-primary hover:text-text-secondary underline decoration-border-subtle underline-offset-[3px] cursor-pointer transition-colors"
                             >
-                                natively.contact@gmail.com
+                                glassnote.contact@gmail.com
                             </span>
                             .
                         </p>

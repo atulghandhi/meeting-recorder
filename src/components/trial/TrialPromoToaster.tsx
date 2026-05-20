@@ -4,15 +4,15 @@
 //
 // Premium Apple-inspired trial offer card.
 // Shows 5 seconds after launcher is visible on non-first launches,
-// when no Natively API key is stored and no trial is active.
+// when no Glassnote API key is stored and no trial is active.
 // Violet/purple accent — consistent with the trial brand throughout the app.
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { X, ArrowRight, Zap, Mic, Search, Clock } from 'lucide-react';
 
-const STORAGE_KEY      = 'natively_trial_promo_ts';
-const PERMS_KEY        = 'natively_perms_shown_v1';
+const STORAGE_KEY      = 'glassnote_trial_promo_ts';
+const PERMS_KEY        = 'glassnote_perms_shown_v1';
 const STARTUP_DELAY_MS = 10_000;
 const COOLDOWN_DAYS    = 7;
 
@@ -47,7 +47,7 @@ const ITEM    = {
 
 interface Props {
   isOpen:         boolean;
-  hasNativelyKey: boolean;
+  hasGlassnoteKey: boolean;
   hasTrialToken:  boolean;
   onDismiss:      () => void;
   onStartTrial:   () => Promise<void>;
@@ -55,7 +55,7 @@ interface Props {
 }
 
 export const TrialPromoToaster: React.FC<Props> = ({
-  isOpen, hasNativelyKey, hasTrialToken, onDismiss, onStartTrial, onManualSetup,
+  isOpen, hasGlassnoteKey, hasTrialToken, onDismiss, onStartTrial, onManualSetup,
 }) => {
   const [visible,  setVisible]  = useState(false);
   const [starting, setStarting] = useState(false);
@@ -66,7 +66,7 @@ export const TrialPromoToaster: React.FC<Props> = ({
     if (!isOpen) { setVisible(false); return; }
 
     // Don't show if user has a key or trial already
-    if (hasNativelyKey || hasTrialToken) return;
+    if (hasGlassnoteKey || hasTrialToken) return;
 
     // Don't show on very first launch (permissions toaster shows instead)
     const permsShown = localStorage.getItem(PERMS_KEY);
@@ -78,7 +78,7 @@ export const TrialPromoToaster: React.FC<Props> = ({
 
     const t = setTimeout(() => setVisible(true), STARTUP_DELAY_MS);
     return () => clearTimeout(t);
-  }, [isOpen, hasNativelyKey, hasTrialToken]);
+  }, [isOpen, hasGlassnoteKey, hasTrialToken]);
 
   const handleDismiss = () => {
     localStorage.setItem(STORAGE_KEY, String(Date.now()));
@@ -180,7 +180,7 @@ export const TrialPromoToaster: React.FC<Props> = ({
               {/* Header */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '26px', paddingBottom: '16px', borderBottom: `1px solid ${T.rule}` }}>
                 <span style={{ fontSize: '10.5px', fontWeight: 660, letterSpacing: '0.15em', textTransform: 'uppercase', color: T.t2 }}>
-                  Natively API
+                  Glassnote API
                 </span>
                 <button onClick={handleDismiss} aria-label="Dismiss"
                   style={{ background: 'none', border: 'none', cursor: 'pointer', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', opacity: 0.35, padding: 0, transition: 'opacity 150ms, background 150ms' }}
@@ -222,7 +222,7 @@ export const TrialPromoToaster: React.FC<Props> = ({
                     Try everything. No card needed.
                   </h2>
                   <p style={{ fontSize: '13px', lineHeight: 1.66, color: T.t3, margin: '0 auto', maxWidth: '330px' }}>
-                    Full Natively API access — AI chat, meeting transcription, and company research — free for 30 minutes. Bound to this device. No sign-in.
+                    Full Glassnote API access — AI chat, meeting transcription, and company research — free for 30 minutes. Bound to this device. No sign-in.
                   </p>
                 </motion.div>
 

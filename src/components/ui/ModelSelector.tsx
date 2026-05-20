@@ -51,8 +51,8 @@ export const ModelSelector: React.FC<ModelSelectorProps> = ({ currentModel, onSe
                 const creds = await window.electronAPI?.getStoredCredentials?.();
                 const cModels: { id: string; name: string; desc: string; provider: string }[] = [];
 
-                if (creds?.hasNativelyKey) {
-                    cModels.push({ id: 'natively', name: 'Natively API', desc: 'Managed AI • Fast execution', provider: 'natively' });
+                if (creds?.hasGlassnoteKey) {
+                    cModels.push({ id: 'glassnote', name: 'Glassnote API', desc: 'Managed AI • Fast execution', provider: 'glassnote' });
                 }
                 for (const [prov, cfg] of Object.entries(STANDARD_CLOUD_MODELS)) {
                     if (!cfg.hasKeyCheck(creds)) continue;

@@ -21,7 +21,7 @@ export interface NativeModule {
   getDefaultOutputDeviceId?: () => string;
   // macOS-only: apply NSPanel-nonactivating + becomesKeyOnlyIfNeeded +
   // hidesOnDeactivate=NO + the right collectionBehavior on the overlay
-  // window so clicks/keystrokes don't activate Natively (foreground app
+  // window so clicks/keystrokes don't activate Glassnote (foreground app
   // keeps key state in dock/menu bar/screen-share). Requires a binary
   // rebuild — WindowHelper checks `typeof` and degrades to plain panel
   // type if missing. Caller passes BrowserWindow.getNativeWindowHandle().
@@ -152,8 +152,8 @@ let cached: NativeModule | null | undefined = undefined;
 /**
  * Loads the Rust native module directly from the .node binary file.
  *
- * We bypass `require('natively-audio')` intentionally. That approach relied on
- * npm creating a symlink from node_modules/natively-audio -> native-module/,
+ * We bypass `require('glassnote-audio')` intentionally. That approach relied on
+ * npm creating a symlink from node_modules/glassnote-audio -> native-module/,
  * which breaks on Windows (Git Bash produces POSIX-style symlinks that Node
  * can't resolve). Loading the .node file directly avoids npm entirely.
  *

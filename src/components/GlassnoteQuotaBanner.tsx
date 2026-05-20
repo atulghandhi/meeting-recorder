@@ -1,5 +1,5 @@
-// src/components/NativelyQuotaBanner.tsx
-// Startup banner shown when any Natively quota bucket reaches ≥90% usage.
+// src/components/GlassnoteQuotaBanner.tsx
+// Startup banner shown when any Glassnote quota bucket reaches ≥90% usage.
 // Checks on every startup — no throttle.
 
 import React, { useEffect, useState } from 'react';
@@ -19,7 +19,7 @@ const STARTUP_DELAY_MS = 3000;
 const THRESHOLD_PCT    = 90;
 const UPGRADE_URL      = 'https://checkout.dodopayments.com/buy/pdt_0NbFixGmD8CSeawb5qvVl';
 
-export const NativelyQuotaBanner: React.FC = () => {
+export const GlassnoteQuotaBanner: React.FC = () => {
     const [nearLimitBuckets, setNearLimitBuckets] = useState<NearLimitBucket[]>([]);
     const [visible, setVisible] = useState(false);
 
@@ -31,11 +31,11 @@ export const NativelyQuotaBanner: React.FC = () => {
             if (cancelled) return;
 
             try {
-                const result = await window.electronAPI?.getNativelyUsage?.();
-                console.log('[NativelyQuotaBanner] usage:', JSON.stringify(result));
+                const result = await window.electronAPI?.getGlassnoteUsage?.();
+                console.log('[GlassnoteQuotaBanner] usage:', JSON.stringify(result));
 
                 if (cancelled || !result?.ok || !result.quota) {
-                    console.log('[NativelyQuotaBanner] no quota data — skipping');
+                    console.log('[GlassnoteQuotaBanner] no quota data — skipping');
                     return;
                 }
 
@@ -60,14 +60,14 @@ export const NativelyQuotaBanner: React.FC = () => {
                         pct:   Math.round((bucket.used / bucket.limit) * 100),
                     }));
 
-                console.log('[NativelyQuotaBanner] near-limit:', near);
+                console.log('[GlassnoteQuotaBanner] near-limit:', near);
 
                 if (near.length === 0) return;
 
                 setNearLimitBuckets(near);
                 setVisible(true);
             } catch (e: any) {
-                console.log('[NativelyQuotaBanner] error:', e?.message);
+                console.log('[GlassnoteQuotaBanner] error:', e?.message);
             }
         };
 
@@ -91,7 +91,7 @@ export const NativelyQuotaBanner: React.FC = () => {
                     <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-2">
                             <AlertTriangle size={14} className="text-amber-400 shrink-0 mt-[1px]" strokeWidth={2} />
-                            <span className="text-[13px] font-semibold text-[#E0E0E0]">Natively quota almost full</span>
+                            <span className="text-[13px] font-semibold text-[#E0E0E0]">Glassnote quota almost full</span>
                         </div>
                         <button
                             onClick={() => setVisible(false)}

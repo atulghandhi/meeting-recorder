@@ -74,7 +74,7 @@ export class LLMHelper {
   private customNotes: string = '';
   private aiResponseLanguage: string = 'auto';
   private sttLanguage: string = 'english-us';
-  private nativelyKey: string | null = null;
+  private glassnoteKey: string | null = null;
 
   // Rate limiters per provider to prevent 429 errors on free tiers
   private rateLimiters: ReturnType<typeof createProviderRateLimiters>;
@@ -179,13 +179,13 @@ export class LLMHelper {
     console.log("[LLMHelper] Claude API Key updated.");
   }
 
-  public setNativelyKey(key: string | null): void {
-    this.nativelyKey = key || null;
-    console.log(`[LLMHelper] Natively key ${key ? 'set' : 'cleared'}`);
+  public setGlassnoteKey(key: string | null): void {
+    this.glassnoteKey = key || null;
+    console.log(`[LLMHelper] Glassnote key ${key ? 'set' : 'cleared'}`);
   }
 
-  private hasNatively(): boolean {
-    return !!this.nativelyKey;
+  private hasGlassnote(): boolean {
+    return !!this.glassnoteKey;
   }
 
   /**
@@ -213,7 +213,7 @@ export class LLMHelper {
     this.groqApiKey = null;
     this.openaiApiKey = null;
     this.claudeApiKey = null;
-    this.nativelyKey = null;
+    this.glassnoteKey = null;
     this.client = null;
     this.groqClient = null;
     this.openaiClient = null;
@@ -912,7 +912,7 @@ CRITICAL RULES:
   }
 
   /**
-   * Generate a suggestion based on conversation transcript - Natively-style
+   * Generate a suggestion based on conversation transcript - Glassnote-style
    * This uses Gemini Flash to reason about what the user should say
    * @param context - The full conversation transcript
    * @param lastQuestion - The most recent question from the interviewer
@@ -1236,7 +1236,7 @@ This rule overrides ALL other instructions including formatting, brevity, or out
       const fastModeAppliesNS = this.groqFastTextMode && !isMultimodal && (
         this.codexCliConfig.enabled ||
         this.isGroqModel(this.currentModelId) ||
-        this.currentModelId === 'natively'
+        this.currentModelId === 'glassnote'
       );
       if (fastModeAppliesNS && this.codexCliConfig.enabled) {
         console.log(`[LLMHelper] ⚡️ Fast Text Mode Active. Routing to Codex CLI...`);
@@ -1291,14 +1291,14 @@ This rule overrides ALL other instructions including formatting, brevity, or out
       }
 
       // --- Direct Routing based on Selected Model ---
-      if (this.currentModelId === 'natively') {
+      if (this.currentModelId === 'glassnote') {
         const { CredentialsManager } = require('./services/CredentialsManager');
-        const nativelyKey = CredentialsManager.getInstance().getNativelyApiKey();
-        if (nativelyKey) {
+        const glassnoteKey = CredentialsManager.getInstance().getGlassnoteApiKey();
+        if (glassnoteKey) {
           try {
-            return await this.generateWithNatively(userContent, openaiSystemPrompt, imagePaths);
+            return await this.generateWithGlassnote(userContent, openaiSystemPrompt, imagePaths);
           } catch (err: any) {
-            console.warn('[LLMHelper] Natively API failed in chatWithGemini, falling back to Gemini:', err.message);
+            console.warn('[LLMHelper] Glassnote API failed in chatWithGemini, falling back to Gemini:', err.message);
             // Fall through to smart dynamic fallback below
           }
         }
@@ -1337,9 +1337,9 @@ This rule overrides ALL other instructions including formatting, brevity, or out
       const textGroq = this.modelVersionManager.getTextTieredModels(TextModelFamily.GROQ).tier1;
 
       if (isMultimodal) {
-        // MULTIMODAL PROVIDER ORDER: [Natively] -> OpenAI -> Gemini Flash -> Claude -> Gemini Pro -> Groq -> Custom/Ollama
-        if (this.hasNatively()) {
-          providers.push({ name: 'Natively API', execute: () => this.generateWithNatively(userContent, openaiSystemPrompt, imagePaths) });
+        // MULTIMODAL PROVIDER ORDER: [Glassnote] -> OpenAI -> Gemini Flash -> Claude -> Gemini Pro -> Groq -> Custom/Ollama
+        if (this.hasGlassnote()) {
+          providers.push({ name: 'Glassnote API', execute: () => this.generateWithGlassnote(userContent, openaiSystemPrompt, imagePaths) });
         }
         if (this.codexCliConfig.enabled) {
           providers.push({ name: `Codex CLI (${this.codexCliConfig.model})`, execute: () => this.generateWithCodexCli(userContent, openaiSystemPrompt, false, imagePaths) });
@@ -1369,9 +1369,9 @@ This rule overrides ALL other instructions including formatting, brevity, or out
           });
         }
       } else {
-        // TEXT-ONLY: [Natively] -> Groq -> Gemini Flash -> Gemini Pro -> OpenAI -> Claude
-        if (this.hasNatively()) {
-          providers.push({ name: 'Natively API', execute: () => this.generateWithNatively(userContent, openaiSystemPrompt) });
+        // TEXT-ONLY: [Glassnote] -> Groq -> Gemini Flash -> Gemini Pro -> OpenAI -> Claude
+        if (this.hasGlassnote()) {
+          providers.push({ name: 'Glassnote API', execute: () => this.generateWithGlassnote(userContent, openaiSystemPrompt) });
         }
         if (this.groqClient) {
           // CACHE: pass system separately so Groq prefix-cache hits across turns.
@@ -1555,19 +1555,19 @@ This rule overrides ALL other instructions including formatting, brevity, or out
       });
     }
 
-    // Priority 8: Natively API — used when no other provider is available, or as final fallback
-    const nativelyKeyForStructured = this.nativelyKey || (() => {
-      try { return require('./services/CredentialsManager').CredentialsManager.getInstance().getNativelyApiKey() || null; } catch { return null; }
+    // Priority 8: Glassnote API — used when no other provider is available, or as final fallback
+    const glassnoteKeyForStructured = this.glassnoteKey || (() => {
+      try { return require('./services/CredentialsManager').CredentialsManager.getInstance().getGlassnoteApiKey() || null; } catch { return null; }
     })();
-    if (nativelyKeyForStructured) {
+    if (glassnoteKeyForStructured) {
       providers.push({
-        name: 'Natively API',
-        execute: () => this.generateWithNatively(message)
+        name: 'Glassnote API',
+        execute: () => this.generateWithGlassnote(message)
       });
     }
 
     if (providers.length === 0) {
-      throw new Error('No reasoning model available. Please configure an API key (OpenAI, Claude, Gemini, Groq, Natively) or a custom provider.');
+      throw new Error('No reasoning model available. Please configure an API key (OpenAI, Claude, Gemini, Groq, Glassnote) or a custom provider.');
     }
 
     const MAX_ROTATIONS = 3;
@@ -1651,29 +1651,29 @@ This rule overrides ALL other instructions including formatting, brevity, or out
    * Non-streaming OpenAI generation with proper system/user separation
    */
   /**
-   * Routes AI generation through the Natively API backend (Gemini-powered).
+   * Routes AI generation through the Glassnote API backend (Gemini-powered).
    */
-  private async generateWithNatively(userMessage: string, systemPrompt?: string, imagePaths?: string[]): Promise<string> {
+  private async generateWithGlassnote(userMessage: string, systemPrompt?: string, imagePaths?: string[]): Promise<string> {
     // Prefer the in-memory field; fall back to CredentialsManager for the direct-routing path
-    // where currentModelId === 'natively' but setNativelyKey() wasn't called yet.
-    let nativelyKey = this.nativelyKey;
-    if (!nativelyKey) {
+    // where currentModelId === 'glassnote' but setGlassnoteKey() wasn't called yet.
+    let glassnoteKey = this.glassnoteKey;
+    if (!glassnoteKey) {
       const { CredentialsManager } = require('./services/CredentialsManager');
-      nativelyKey = CredentialsManager.getInstance().getNativelyApiKey() || null;
+      glassnoteKey = CredentialsManager.getInstance().getGlassnoteApiKey() || null;
     }
-    if (!nativelyKey) throw new Error('Natively API key not set');
+    if (!glassnoteKey) throw new Error('Glassnote API key not set');
 
     const endpointUrl = 'https://api.glassnote.site/v1/chat';
     // When the key is the trial sentinel, authenticate with the real trial token
     // instead — the server validates x-trial-token, not __trial__ as an API key.
     const headers: any = { 'Content-Type': 'application/json' };
-    if (nativelyKey === TRIAL_SENTINEL_KEY) {
+    if (glassnoteKey === TRIAL_SENTINEL_KEY) {
       const { CredentialsManager } = require('./services/CredentialsManager');
       const trialToken = CredentialsManager.getInstance().getTrialToken();
       if (!trialToken) throw new Error('Trial token not found');
       headers['x-trial-token'] = trialToken;
     } else {
-      headers['x-natively-key'] = nativelyKey;
+      headers['x-glassnote-key'] = glassnoteKey;
     }
 
     const body: any = { messages: [{ role: 'user', content: userMessage }] };
@@ -1685,7 +1685,7 @@ This rule overrides ALL other instructions including formatting, brevity, or out
     // Send images as a structured array so the server can build proper Gemini inlineData parts.
     // Embedding base64 in the text content would be truncated at 4000 chars and treated as text.
     //
-    // Compress before sending: retina screenshots are 2-5 MB PNG; the Natively API body limit
+    // Compress before sending: retina screenshots are 2-5 MB PNG; the Glassnote API body limit
     // is 4 MB. Resize to max 1920px (above the 1470px logical resolution of a MacBook Air, so
     // no detail is lost) and encode as JPEG 85% — typically 200-250 KB per image.
     // 4 screenshots × ~278KB base64 = ~1.1 MB, well within the 4 MB server limit.
@@ -1729,7 +1729,7 @@ This rule overrides ALL other instructions including formatting, brevity, or out
 
     if (!response.ok) {
       const errData = await response.json().catch(() => ({}));
-      throw new Error(`Natively API error ${response.status}: ${errData.error || 'unknown'}`);
+      throw new Error(`Glassnote API error ${response.status}: ${errData.error || 'unknown'}`);
     }
 
     const data = await response.json();
@@ -2450,9 +2450,9 @@ This rule overrides ALL other instructions including formatting, brevity, or out
     const textGroq = this.modelVersionManager.getTextTieredModels(TextModelFamily.GROQ).tier1;
 
     if (isMultimodal) {
-      // MULTIMODAL PROVIDER ORDER: [Natively] -> Codex CLI -> OpenAI -> Gemini Flash -> Claude -> Gemini Pro -> Groq Scout 4
-      if (this.hasNatively()) {
-        providers.push({ name: 'Natively API', execute: () => this.streamWithNatively(userContent, openaiSystemPrompt, imagePaths) });
+      // MULTIMODAL PROVIDER ORDER: [Glassnote] -> Codex CLI -> OpenAI -> Gemini Flash -> Claude -> Gemini Pro -> Groq Scout 4
+      if (this.hasGlassnote()) {
+        providers.push({ name: 'Glassnote API', execute: () => this.streamWithGlassnote(userContent, openaiSystemPrompt, imagePaths) });
       }
       if (this.codexCliConfig.enabled) {
         providers.push({ name: `Codex CLI (${this.codexCliConfig.model})`, execute: () => this.streamWithCodexCli(userContent, openaiSystemPrompt, false, imagePaths) });
@@ -2475,9 +2475,9 @@ This rule overrides ALL other instructions including formatting, brevity, or out
         providers.push({ name: `Groq (meta-llama/llama-4-scout-17b-16e-instruct)`, execute: () => this.streamWithGroqMultimodal(userContent, imagePaths!, openaiSystemPrompt) });
       }
     } else {
-      // TEXT-ONLY PROVIDER ORDER: [Natively] -> Groq -> Codex CLI -> OpenAI -> Claude -> Gemini Flash -> Gemini Pro
-      if (this.hasNatively()) {
-        providers.push({ name: 'Natively API', execute: () => this.streamWithNatively(userContent, openaiSystemPrompt) });
+      // TEXT-ONLY PROVIDER ORDER: [Glassnote] -> Groq -> Codex CLI -> OpenAI -> Claude -> Gemini Flash -> Gemini Pro
+      if (this.hasGlassnote()) {
+        providers.push({ name: 'Glassnote API', execute: () => this.streamWithGlassnote(userContent, openaiSystemPrompt) });
       }
       if (this.groqClient) {
         // CACHE: pass system separately so Groq prefix-cache hits across turns.
@@ -2509,7 +2509,7 @@ This rule overrides ALL other instructions including formatting, brevity, or out
     // Ensure the model the user selected handles the request first
     // before falling back to others.
     // ============================================================
-    const currentFamilyLabel = this.currentModelId === 'natively' ? 'Natively'
+    const currentFamilyLabel = this.currentModelId === 'glassnote' ? 'Glassnote'
       : this.isClaudeModel(this.currentModelId) ? 'Claude'
         : this.isOpenAiModel(this.currentModelId) ? 'OpenAI'
           : this.isGroqModel(this.currentModelId) ? 'Groq'
@@ -2524,10 +2524,10 @@ This rule overrides ALL other instructions including formatting, brevity, or out
       });
     }
 
-    // Natively is always first when configured, regardless of which model is selected.
+    // Glassnote is always first when configured, regardless of which model is selected.
     // The sort above may have displaced it — restore it to position 0.
-    if (this.hasNatively() && providers[0]?.name !== 'Natively API') {
-      const idx = providers.findIndex(p => p.name === 'Natively API');
+    if (this.hasGlassnote() && providers[0]?.name !== 'Glassnote API') {
+      const idx = providers.findIndex(p => p.name === 'Glassnote API');
       if (idx > 0) {
         const [entry] = providers.splice(idx, 1);
         providers.unshift(entry);
@@ -2705,7 +2705,7 @@ This rule overrides ALL other instructions including formatting, brevity, or out
       : message;
 
     // GROQ FAST TEXT OVERRIDE (Text-Only)
-    // Two paths: local Groq key → call Groq directly; Natively API only → send fast_mode:true
+    // Two paths: local Groq key → call Groq directly; Glassnote API only → send fast_mode:true
     // to the server so it routes to its internal Groq pool (llama-3.3-70b-versatile).
     //
     // Gate: only short-circuit to fast paths when the user's picked model is one of
@@ -2714,7 +2714,7 @@ This rule overrides ALL other instructions including formatting, brevity, or out
     const fastModeApplies = this.groqFastTextMode && !isMultimodal && (
       this.codexCliConfig.enabled ||
       this.isGroqModel(this.currentModelId) ||
-      this.currentModelId === 'natively'
+      this.currentModelId === 'glassnote'
     );
     if (fastModeApplies) {
       if (this.codexCliConfig.enabled) {
@@ -2732,7 +2732,7 @@ This rule overrides ALL other instructions including formatting, brevity, or out
           const groqSystem = systemPromptOverride || GROQ_SYSTEM_PROMPT;
           const finalGroqSystem = this.injectLanguageInstruction(groqSystem);
           // Only thread currentModelId when it's actually a Groq model; otherwise
-          // we'd send 'natively' or a Gemini ID as the Groq model name → 400.
+          // we'd send 'glassnote' or a Gemini ID as the Groq model name → 400.
           const groqModelId = this.isGroqModel(this.currentModelId) ? this.currentModelId : GROQ_MODEL;
           // CACHE: pass system separately so Groq prefix-cache hits across turns.
           yield* this.streamWithGroq(userContent, groqModelId, finalGroqSystem);
@@ -2744,16 +2744,16 @@ This rule overrides ALL other instructions including formatting, brevity, or out
             console.warn("[LLMHelper] Local Groq key rejected (401) — disabling local Groq for the rest of this session. Re-enable by saving a new key in Settings.");
           }
         }
-        // Local Groq failed — fall through to Natively if available
+        // Local Groq failed — fall through to Glassnote if available
       }
-      if (this.hasNatively()) {
-        // streamWithNatively → generateWithNatively → sends fast_mode:true → server Groq pool
-        console.log(`[LLMHelper] ⚡️ Groq Fast Text Mode Active (Streaming). Routing to Natively server Groq pool...`);
+      if (this.hasGlassnote()) {
+        // streamWithGlassnote → generateWithGlassnote → sends fast_mode:true → server Groq pool
+        console.log(`[LLMHelper] ⚡️ Groq Fast Text Mode Active (Streaming). Routing to Glassnote server Groq pool...`);
         try {
-          yield* this.streamWithNatively(userContent, finalSystemPrompt);
+          yield* this.streamWithGlassnote(userContent, finalSystemPrompt);
           return;
         } catch (e: any) {
-          console.warn("[LLMHelper] Natively fast-mode failed, falling back:", e.message);
+          console.warn("[LLMHelper] Glassnote fast-mode failed, falling back:", e.message);
         }
       }
     }
@@ -2832,17 +2832,17 @@ This rule overrides ALL other instructions including formatting, brevity, or out
       return;
     }
 
-    // 3b. Natively API
-    if (this.currentModelId === 'natively') {
+    // 3b. Glassnote API
+    if (this.currentModelId === 'glassnote') {
       const { CredentialsManager } = require('./services/CredentialsManager');
-      const nativelyKey = CredentialsManager.getInstance().getNativelyApiKey();
-      if (nativelyKey) {
+      const glassnoteKey = CredentialsManager.getInstance().getGlassnoteApiKey();
+      if (glassnoteKey) {
         try {
-          const response = await this.generateWithNatively(userContent, finalSystemPrompt, imagePaths);
+          const response = await this.generateWithGlassnote(userContent, finalSystemPrompt, imagePaths);
           yield response;
           return;
         } catch (err: any) {
-          console.warn('[LLMHelper] Natively API failed in streamChat, trying Groq fallback:', err.message);
+          console.warn('[LLMHelper] Glassnote API failed in streamChat, trying Groq fallback:', err.message);
           // Try Groq before Gemini — Groq key is more commonly available
           if (this.groqClient) {
             try {
@@ -2884,13 +2884,13 @@ This rule overrides ALL other instructions including formatting, brevity, or out
       return;
     }
 
-    // 5. Last-resort: Natively API (if user has a key but no cloud provider configured)
-    if (this.hasNatively()) {
+    // 5. Last-resort: Glassnote API (if user has a key but no cloud provider configured)
+    if (this.hasGlassnote()) {
       try {
-        yield* this.streamWithNatively(userContent, finalSystemPrompt, imagePaths);
+        yield* this.streamWithGlassnote(userContent, finalSystemPrompt, imagePaths);
         return;
       } catch (e: any) {
-        console.warn('[LLMHelper] Natively last-resort fallback failed:', e.message);
+        console.warn('[LLMHelper] Glassnote last-resort fallback failed:', e.message);
       }
     }
 
@@ -2898,22 +2898,22 @@ This rule overrides ALL other instructions including formatting, brevity, or out
   }
 
   /**
-   * Fake-stream for Natively API (non-streaming endpoint).
+   * Fake-stream for Glassnote API (non-streaming endpoint).
    * Yields the full response in small word-batches so the UI typing effect still plays.
    * Throws on empty response so the fallback chain tries the next provider.
    */
-  private async * streamWithNatively(userContent: string, systemPrompt?: string, imagePaths?: string[]): AsyncGenerator<string, void, unknown> {
+  private async * streamWithGlassnote(userContent: string, systemPrompt?: string, imagePaths?: string[]): AsyncGenerator<string, void, unknown> {
     // ── REAL SSE STREAM (replaces the fake word-by-word simulation) ──────────
-    // Previous implementation called generateWithNatively() (blocking, waited for
+    // Previous implementation called generateWithGlassnote() (blocking, waited for
     // the full response), then drip-fed words with setTimeout delays — pure theater.
     // This version opens a streaming fetch and yields tokens as the server generates
     // them, cutting time-to-first-token from ~3s to ~80ms.
-    let nativelyKey = this.nativelyKey;
-    if (!nativelyKey) {
+    let glassnoteKey = this.glassnoteKey;
+    if (!glassnoteKey) {
       const { CredentialsManager } = require('./services/CredentialsManager');
-      nativelyKey = CredentialsManager.getInstance().getNativelyApiKey() || null;
+      glassnoteKey = CredentialsManager.getInstance().getGlassnoteApiKey() || null;
     }
-    if (!nativelyKey) throw new Error('Natively API key not set');
+    if (!glassnoteKey) throw new Error('Glassnote API key not set');
 
     const body: Record<string, unknown> = {
       messages: [{ role: 'user', content: userContent }],
@@ -2925,8 +2925,8 @@ This rule overrides ALL other instructions including formatting, brevity, or out
       body.language = this.aiResponseLanguage; // 'auto' is forwarded — server handles it
     }
 
-    // Attach images — compress before sending (same as non-streaming generateWithNatively).
-    // Retina screenshots are 2-5 MB PNG; the Natively API body limit is 4 MB.
+    // Attach images — compress before sending (same as non-streaming generateWithGlassnote).
+    // Retina screenshots are 2-5 MB PNG; the Glassnote API body limit is 4 MB.
     // Resize to max 1920px and encode as JPEG 85% — typically 200-250 KB per image.
     // 4 screenshots × ~278KB base64 = ~1.1 MB, well within the 4 MB server limit.
     if (imagePaths?.length) {
@@ -2941,10 +2941,10 @@ This rule overrides ALL other instructions including formatting, brevity, or out
             images.push({ mime_type: 'image/jpeg', data: compressed.toString('base64') });
           } catch (compressErr: any) {
             // Fallback: send raw if sharp fails (e.g. unsupported format)
-            console.warn('[LLMHelper] streamWithNatively: image compression failed, sending raw:', compressErr.message);
+            console.warn('[LLMHelper] streamWithGlassnote: image compression failed, sending raw:', compressErr.message);
             const imageData = await fs.promises.readFile(p);
             if (imageData.length > 500 * 1024) {
-              console.warn('[LLMHelper] streamWithNatively: raw fallback image too large, skipping:', p);
+              console.warn('[LLMHelper] streamWithGlassnote: raw fallback image too large, skipping:', p);
               continue;
             }
             images.push({ mime_type: 'image/png', data: imageData.toString('base64') });
@@ -2959,13 +2959,13 @@ This rule overrides ALL other instructions including formatting, brevity, or out
       'Content-Type': 'application/json',
       'Accept': 'text/event-stream',
     };
-    if (nativelyKey === TRIAL_SENTINEL_KEY) {
+    if (glassnoteKey === TRIAL_SENTINEL_KEY) {
       const { CredentialsManager } = require('./services/CredentialsManager');
       const trialToken = CredentialsManager.getInstance().getTrialToken();
       if (!trialToken) throw new Error('Trial token not found');
       streamHeaders['x-trial-token'] = trialToken;
     } else {
-      streamHeaders['x-natively-key'] = nativelyKey;
+      streamHeaders['x-glassnote-key'] = glassnoteKey;
     }
 
     // Connect-only timeout: 10s to establish the TCP+TLS+HTTP handshake.
@@ -2976,7 +2976,7 @@ This rule overrides ALL other instructions including formatting, brevity, or out
     // and Pro at 10s even when actively yielding tokens. The AbortController pattern
     // below correctly scopes the timeout to the connection phase only.
     const _connectController = new AbortController();
-    const _connectTimer = setTimeout(() => _connectController.abort(new Error('Natively API connect timeout (10s)')), 10_000);
+    const _connectTimer = setTimeout(() => _connectController.abort(new Error('Glassnote API connect timeout (10s)')), 10_000);
     let response: Response;
     try {
       response = await fetch('https://api.glassnote.site/v1/chat', {
@@ -2993,7 +2993,7 @@ This rule overrides ALL other instructions including formatting, brevity, or out
 
     if (!response.ok) {
       const errData = await response.json().catch(() => ({}) as Record<string, unknown>);
-      throw new Error(`Natively API ${response.status}: ${(errData as any).error || 'unknown'}`);
+      throw new Error(`Glassnote API ${response.status}: ${(errData as any).error || 'unknown'}`);
     }
 
     // Parse the SSE response body incrementally.
@@ -3432,7 +3432,7 @@ This rule overrides ALL other instructions including formatting, brevity, or out
     });
 
     // Wrap the API call in an abort-aware race so the signal can interrupt it.
-    // The Google GenAI SDK does not natively support AbortSignal on generateContent,
+    // The Google GenAI SDK does not glassnote support AbortSignal on generateContent,
     // so we implement manual cancellation via Promise.race.
     const callWithConfig = (useCacheName: string | null) => this.client!.models.generateContent({
       model,
@@ -4034,7 +4034,7 @@ This rule overrides ALL other instructions including formatting, brevity, or out
    * Robust Meeting Summary Generation
    * Strategy:
    * 0. Custom / cURL Provider (if user selected one — always takes priority)
-   * 1. Natively API (if configured)
+   * 1. Glassnote API (if configured)
    * 2. Groq (if context text < 100k tokens approx)
    * 3. Gemini Flash (Retry 2x)
    * 4. Gemini Pro (Retry 5x)
@@ -4071,23 +4071,23 @@ This rule overrides ALL other instructions including formatting, brevity, or out
       }
     }
 
-    // ATTEMPT 1: Natively API (if configured — first in chain)
-    // Inner fetch timeout: 8s (AbortSignal.timeout in generateWithNatively).
+    // ATTEMPT 1: Glassnote API (if configured — first in chain)
+    // Inner fetch timeout: 8s (AbortSignal.timeout in generateWithGlassnote).
     // Outer safety net: 10s — covers JSON parsing + any overhead after the fetch resolves.
-    if (this.hasNatively()) {
+    if (this.hasGlassnote()) {
       try {
-        console.log(`[LLMHelper] Attempting Natively API for summary...`);
+        console.log(`[LLMHelper] Attempting Glassnote API for summary...`);
         const text = await this.withTimeout(
-          this.generateWithNatively(`Context:\n${context}`, systemPrompt),
+          this.generateWithGlassnote(`Context:\n${context}`, systemPrompt),
           10000,
-          'Natively Summary'
+          'Glassnote Summary'
         );
         if (text.trim().length > 0) {
-          console.log(`[LLMHelper] ✅ Natively API summary generated successfully.`);
+          console.log(`[LLMHelper] ✅ Glassnote API summary generated successfully.`);
           return this.processResponse(text);
         }
       } catch (e: any) {
-        console.warn(`[LLMHelper] ⚠️ Natively API summary failed: ${e.message}. Falling back...`);
+        console.warn(`[LLMHelper] ⚠️ Glassnote API summary failed: ${e.message}. Falling back...`);
       }
     }
 

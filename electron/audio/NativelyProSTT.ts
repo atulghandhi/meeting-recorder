@@ -5,9 +5,9 @@ import { TRIAL_SENTINEL_KEY } from '../config/constants';
 import { streamingStttWsOptions } from './dnsHelpers';
 
 /**
- * NativelyProSTT
+ * GlassnoteProSTT
  *
- * Connects to the Natively API WebSocket transcription endpoint.
+ * Connects to the Glassnote API WebSocket transcription endpoint.
  * Forwards the user's selected accent/language to the server so
  * Deepgram / Google STT use the correct language model.
  *
@@ -16,7 +16,7 @@ import { streamingStttWsOptions } from './dnsHelpers';
  *
  * All subsequent messages are binary LINEAR16 PCM audio.
  */
-export class NativelyProSTT extends EventEmitter {
+export class GlassnoteProSTT extends EventEmitter {
     private apiKey: string;
     private channel: string;  // 'system' | 'mic' — disambiguates concurrent streams per key
     private ws: WebSocket | null = null;
@@ -81,7 +81,7 @@ export class NativelyProSTT extends EventEmitter {
         if (rate === this.sampleRate) return;
         const previousRate = this.sampleRate;
         this.sampleRate = rate;
-        console.log(`[NativelyProSTT:${this.channel}] Sample rate ${previousRate}Hz → ${rate}Hz`);
+        console.log(`[GlassnoteProSTT:${this.channel}] Sample rate ${previousRate}Hz → ${rate}Hz`);
 
         // Mid-stream rate change requires reconnection — but ONLY if the
         // server has already confirmed the handshake (`isConnected === true`).
@@ -108,7 +108,7 @@ export class NativelyProSTT extends EventEmitter {
         // exactly when the first chunk arrives — long before the server has
         // confirmed the handshake.
         if (this.isActive && this.isConnected) {
-            console.log(`[NativelyProSTT:${this.channel}] Rate changed mid-stream — reconnecting WS so server uses the new declared rate.`);
+            console.log(`[GlassnoteProSTT:${this.channel}] Rate changed mid-stream — reconnecting WS so server uses the new declared rate.`);
             this.reconnectAttempts = 0;     // fresh session — reset backoff
             this.intentionalClose  = true;  // don't re-trigger via close handler
             this.closeUpstream();
@@ -134,18 +134,18 @@ export class NativelyProSTT extends EventEmitter {
         if (key === 'auto') {
             this.languageBcp47      = 'auto';
             this.languageAlternates = [];
-            console.log('[NativelyProSTT] Language set to auto-detect mode');
+            console.log('[GlassnoteProSTT] Language set to auto-detect mode');
         } else {
             const config = RECOGNITION_LANGUAGES[key];
             if (!config) {
-                console.warn(`[NativelyProSTT] Unknown language key: ${key}`);
+                console.warn(`[GlassnoteProSTT] Unknown language key: ${key}`);
                 return;
             }
             this.languageBcp47      = config.bcp47;
             this.languageAlternates = 'alternates' in config
                 ? (config as EnglishVariant).alternates
                 : [];
-            console.log(`[NativelyProSTT] Language set: ${key} → ${this.languageBcp47}`,
+            console.log(`[GlassnoteProSTT] Language set: ${key} → ${this.languageBcp47}`,
                 this.languageAlternates.length ? `(alts: ${this.languageAlternates.join(', ')})` : '');
         }
 
@@ -156,7 +156,7 @@ export class NativelyProSTT extends EventEmitter {
         // committed (isConnected). If we're still mid-connect, the upcoming
         // 'open' handler will use the just-updated language fields.
         if (this.isActive && this.isConnected) {
-            console.log('[NativelyProSTT] Language changed while active — reconnecting');
+            console.log('[GlassnoteProSTT] Language changed while active — reconnecting');
             this.reconnectAttempts = 0;  // reset counter so the new session starts fresh
             this.intentionalClose  = true;
             this.closeUpstream();
@@ -166,10 +166,10 @@ export class NativelyProSTT extends EventEmitter {
         }
     }
 
-    /** No-op — Natively API server handles VAD internally */
+    /** No-op — Glassnote API server handles VAD internally */
     public notifySpeechEnded(): void {}
 
-    /** No-op — Natively API server finalizes via VAD; no client-side flush available */
+    /** No-op — Glassnote API server finalizes via VAD; no client-side flush available */
     public finalize(): void {}
 
     public setCredentials(_path: string): void {}
@@ -223,21 +223,21 @@ export class NativelyProSTT extends EventEmitter {
                 this.bufferDroppedChunks++;
                 if (!this.bufferOverflowReported) {
                     this.bufferOverflowReported = true;
-                    console.warn(`[NativelyProSTT:${this.channel}] Buffer overflow — dropping oldest chunks. Reconnect taking too long; transcript will have a gap.`);
+                    console.warn(`[GlassnoteProSTT:${this.channel}] Buffer overflow — dropping oldest chunks. Reconnect taking too long; transcript will have a gap.`);
                     this.emit('buffer-overflow', { channel: this.channel });
                 }
             }
             // Log first few buffered chunks so we can tell if audio is arriving before connect
             if (this.buffer.length <= 3 || this.buffer.length % 100 === 0) {
                 const wsState = this.ws ? ['CONNECTING','OPEN','CLOSING','CLOSED'][this.ws.readyState] || this.ws.readyState : 'null';
-                console.log(`[NativelyProSTT:${this.channel}] Buffering chunk (buffer=${this.buffer.length}, isConnected=${this.isConnected}, ws=${wsState})`);
+                console.log(`[GlassnoteProSTT:${this.channel}] Buffering chunk (buffer=${this.buffer.length}, isConnected=${this.isConnected}, ws=${wsState})`);
             }
             return;
         }
 
         this._chunksSent++;
         if (this._chunksSent <= 5 || this._chunksSent % 200 === 0) {
-            console.log(`[NativelyProSTT:${this.channel}] Sent chunk #${this._chunksSent} (${chunk.length}B) to server`);
+            console.log(`[GlassnoteProSTT:${this.channel}] Sent chunk #${this._chunksSent} (${chunk.length}B) to server`);
         }
         this.ws.send(chunk);
     }
@@ -252,13 +252,13 @@ export class NativelyProSTT extends EventEmitter {
             // If the server received two connections within SLOT_INTERVAL_MS, it (or its
             // upstream Deepgram key pool) can fail both with 1006.
             const now = Date.now();
-            const reserved = NativelyProSTT.nextSlotByKey.get(this.apiKey) ?? 0;
+            const reserved = GlassnoteProSTT.nextSlotByKey.get(this.apiKey) ?? 0;
             const staggerMs = Math.max(0, reserved - now);
-            NativelyProSTT.nextSlotByKey.set(this.apiKey, Math.max(now, reserved) + NativelyProSTT.SLOT_INTERVAL_MS);
+            GlassnoteProSTT.nextSlotByKey.set(this.apiKey, Math.max(now, reserved) + GlassnoteProSTT.SLOT_INTERVAL_MS);
 
             if (staggerMs > 0) {
                 this.isConnecting = true; // Hold the slot while waiting
-                console.log(`[NativelyProSTT:${this.channel}] Staggering connection ${staggerMs}ms (concurrent key collision prevention)`);
+                console.log(`[GlassnoteProSTT:${this.channel}] Staggering connection ${staggerMs}ms (concurrent key collision prevention)`);
                 setTimeout(() => {
                     this.isConnecting = false;
                     if (this.isActive) this.connect(true);
@@ -270,7 +270,7 @@ export class NativelyProSTT extends EventEmitter {
         this.isConnecting = true;
         this.isConnected  = false;
 
-        console.log(`[NativelyProSTT] Connecting (attempt ${this.reconnectAttempts + 1})...`);
+        console.log(`[GlassnoteProSTT] Connecting (attempt ${this.reconnectAttempts + 1})...`);
 
         // streamingStttWsOptions sidesteps Node's macOS dual-stack DNS bug for
         // IPv4-only CNAME chains and caps the TLS+upgrade handshake at 15s.
@@ -325,11 +325,11 @@ export class NativelyProSTT extends EventEmitter {
                 const msg = JSON.parse(data.toString());
                 // Log every server message (excluding frequent interim transcripts)
                 if (!msg.text || msg.is_final) {
-                    console.log(`[NativelyProSTT:${this.channel}] Server msg:`, JSON.stringify(msg).slice(0, 120));
+                    console.log(`[GlassnoteProSTT:${this.channel}] Server msg:`, JSON.stringify(msg).slice(0, 120));
                 }
 
                 if (msg.error) {
-                    console.error('[NativelyProSTT] Server error:', msg.error, msg.message || '');
+                    console.error('[GlassnoteProSTT] Server error:', msg.error, msg.message || '');
                     this.emit('error', new Error(msg.error));
                     // Fatal errors — stop reconnecting entirely.
                     // trial_expired must be here: without it the client retries every 1.5-30s
@@ -356,7 +356,7 @@ export class NativelyProSTT extends EventEmitter {
                 if (msg.status === 'connected') {
                     this.isConnecting = false;
                     this.isConnected  = true;
-                    console.log(`[NativelyProSTT] Connected via ${msg.provider}`);
+                    console.log(`[GlassnoteProSTT] Connected via ${msg.provider}`);
                     // Delay resetting reconnectAttempts: only reset after 5 s of stability.
                     // An immediate reset means every rapid 1006 loop re-uses the minimum
                     // 1500 ms delay, causing an infinite tight reconnect storm.
@@ -374,7 +374,7 @@ export class NativelyProSTT extends EventEmitter {
                 // are routed through the correct language model from here on.
                 if (msg.language_detected) {
                     const detected: string = msg.language_detected;
-                    console.log(`[NativelyProSTT] Auto-detected language: ${detected}`);
+                    console.log(`[GlassnoteProSTT] Auto-detected language: ${detected}`);
                     this.languageBcp47      = detected;
                     this.languageAlternates = [];
                     this.reconnectAttempts  = 0;  // fresh session — reset backoff counter
@@ -395,7 +395,7 @@ export class NativelyProSTT extends EventEmitter {
                     });
                 }
             } catch (err) {
-                console.error('[NativelyProSTT] Parse error:', err);
+                console.error('[GlassnoteProSTT] Parse error:', err);
             }
         }));
 
@@ -405,9 +405,9 @@ export class NativelyProSTT extends EventEmitter {
             // instead use a fixed DNS_RETRY_MS delay and keep retrying indefinitely while active.
             this.isDnsFailure = err.code === 'ENOTFOUND' || err.code === 'EAI_AGAIN';
             if (this.isDnsFailure) {
-                console.warn(`[NativelyProSTT:${this.channel}] DNS failure (${err.code}) — will retry in ${this.DNS_RETRY_MS / 1000}s without burning backoff`);
+                console.warn(`[GlassnoteProSTT:${this.channel}] DNS failure (${err.code}) — will retry in ${this.DNS_RETRY_MS / 1000}s without burning backoff`);
             } else {
-                console.error('[NativelyProSTT] WebSocket error:', err.message);
+                console.error('[GlassnoteProSTT] WebSocket error:', err.message);
             }
             this.isConnecting = false;
             this.isConnected  = false;
@@ -417,7 +417,7 @@ export class NativelyProSTT extends EventEmitter {
         ws.on('close', (code: number) => guard(() => {
             this.isConnecting = false;
             this.isConnected  = false;
-            console.log(`[NativelyProSTT] Connection closed (code ${code})`);
+            console.log(`[GlassnoteProSTT] Connection closed (code ${code})`);
 
             // Skip auto-reconnect if this close was intentional (e.g. language change)
             if (this.intentionalClose) {
@@ -443,7 +443,7 @@ export class NativelyProSTT extends EventEmitter {
         // isActive is true, which is safe since the user explicitly started the session.
         if (this.isDnsFailure) {
             this.isDnsFailure = false;  // clear so the next non-DNS error uses normal backoff
-            console.warn(`[NativelyProSTT] DNS retry in ${this.DNS_RETRY_MS / 1000}s...`);
+            console.warn(`[GlassnoteProSTT] DNS retry in ${this.DNS_RETRY_MS / 1000}s...`);
             this.reconnectTimer = setTimeout(() => {
                 this.reconnectTimer = null;
                 if (this.isActive) this.connect();
@@ -462,7 +462,7 @@ export class NativelyProSTT extends EventEmitter {
         const jitter = Math.floor((Math.random() - 0.5) * capped * 0.4);
         const delay = Math.max(this.RECONNECT_BASE_MS, capped + jitter);
         this.reconnectAttempts++;
-        console.log(`[NativelyProSTT:${this.channel}] Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts})...`);
+        console.log(`[GlassnoteProSTT:${this.channel}] Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts})...`);
 
         // Surface a soft UI signal once we cross the warning threshold so the
         // user knows the connection problem is sustained, not a momentary blip.
@@ -486,7 +486,7 @@ export class NativelyProSTT extends EventEmitter {
         const pending = this.buffer;
         this.buffer = [];
         if (this.bufferDroppedChunks > 0) {
-            console.warn(`[NativelyProSTT:${this.channel}] Reconnected — flushing ${pending.length} buffered chunks; ${this.bufferDroppedChunks} were dropped during outage`);
+            console.warn(`[GlassnoteProSTT:${this.channel}] Reconnected — flushing ${pending.length} buffered chunks; ${this.bufferDroppedChunks} were dropped during outage`);
         }
         this.bufferDroppedChunks = 0;
         this.bufferOverflowReported = false;

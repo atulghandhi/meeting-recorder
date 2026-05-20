@@ -41,7 +41,7 @@ const KNOWN_OLLAMA_NATIVE_CTX: Array<[RegExp, number]> = [
 // Models ids we treat as cloud regardless of provider hint.
 function isCloudIdentifier(id: string): boolean {
   const s = id.toLowerCase();
-  if (s === 'natively' || s.startsWith('natively-')) return true;
+  if (s === 'glassnote' || s.startsWith('glassnote-')) return true;
   if (s.startsWith('gemini-') || s.startsWith('models/gemini')) return true;
   if (s.startsWith('gpt-') || s.startsWith('o1-') || s.startsWith('o3-') || s.startsWith('o4-') || s.startsWith('chatgpt-')) return true;
   if (s.startsWith('claude-')) return true;
@@ -106,7 +106,7 @@ export function getModelCapabilities(modelId: string, isOllama: boolean): ModelC
     const b = TIER_BUDGETS['cloud'];
     const supportsImages = lower.startsWith('gemini-') || lower.startsWith('claude-')
       || lower.startsWith('gpt-4o') || lower.startsWith('gpt-4.1') || lower.startsWith('gpt-5')
-      || lower === 'natively' || lower.startsWith('natively-');
+      || lower === 'glassnote' || lower.startsWith('glassnote-');
     return {
       tier: 'cloud',
       maxContextTokens: b.max,

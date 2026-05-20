@@ -140,7 +140,7 @@ export function categorizeSttError(rawError: string): SttErrorCategory {
         };
     }
 
-    // 9. Session conflict (NativelyPro specific)
+    // 9. Session conflict (GlassnotePro specific)
     if (lower.includes('concurrent_session_blocked')) {
         return {
             title: 'Session Conflict',

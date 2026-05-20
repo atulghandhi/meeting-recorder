@@ -212,7 +212,7 @@
 
 /* ── Meeting Interface: Liquid Glass Theme ──────────────────────────────────
    Inspired by Apple's visionOS / macOS Sequoia liquid glass aesthetic.
-   Applied via data-interface-theme="liquid-glass" on the NativelyInterface
+   Applied via data-interface-theme="liquid-glass" on the GlassnoteInterface
    outer container. Works by overriding CSS variables so all overlay-* classes
    automatically adopt the glass look without changing their definitions.
    The transparent-window Electron context means backdrop-filter shows real

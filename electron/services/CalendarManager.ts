@@ -8,12 +8,12 @@ import { EventEmitter } from 'events';
 // Configuration
 // GOOGLE_CLIENT_SECRET is intentionally NOT referenced here — the desktop app
 // only needs the (non-secret) client ID to construct the auth URL. Token
-// exchange and refresh are proxied through natively-api, which holds the secret.
+// exchange and refresh are proxied through glassnote-api, which holds the secret.
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "YOUR_CLIENT_ID_HERE";
 const REDIRECT_URI = "http://localhost:11111/auth/callback";
 const SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"];
 const TOKEN_PATH = path.join(app.getPath('userData'), 'calendar_tokens.enc');
-// Base URL for the natively-api proxy. Override with NATIVELY_API_URL for local dev
+// Base URL for the glassnote-api proxy. Override with NATIVELY_API_URL for local dev
 // (e.g. http://localhost:3000). Trailing slash is stripped to keep route concat clean.
 const NATIVELY_API_URL = (process.env.NATIVELY_API_URL || 'https://api.glassnote.site').replace(/\/+$/, '');
 
@@ -99,7 +99,7 @@ export class CalendarManager extends EventEmitter {
                         }
 
                         if (code) {
-                            res.end('Authentication successful! You can close this window and return to Natively.');
+                            res.end('Authentication successful! You can close this window and return to Glassnote.');
                             // Exchange code for tokens. If this throws, still finish so the server closes.
                             try {
                                 await this.exchangeCodeForToken(code);
@@ -165,7 +165,7 @@ export class CalendarManager extends EventEmitter {
 
     private async exchangeCodeForToken(code: string) {
         try {
-            // Proxied through natively-api so GOOGLE_CLIENT_SECRET never ships in the desktop app.
+            // Proxied through glassnote-api so GOOGLE_CLIENT_SECRET never ships in the desktop app.
             // Fetch (vs. axios) so this call shares the global keep-alive pool with every other
             // request to api.glassnote.site and exposes the same error shape (res.ok / res.status)
             // as the rest of the codebase.
@@ -235,7 +235,7 @@ export class CalendarManager extends EventEmitter {
         }
 
         try {
-            // Proxied through natively-api so GOOGLE_CLIENT_SECRET never ships in the desktop app.
+            // Proxied through glassnote-api so GOOGLE_CLIENT_SECRET never ships in the desktop app.
             const response = await fetch(`${NATIVELY_API_URL}/api/calendar/refresh`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -343,7 +343,7 @@ export class CalendarManager extends EventEmitter {
         const { Notification } = require('electron');
         const notif = new Notification({
             title: 'Meeting starting soon',
-            body: `"${event.title}" starts in 2 minutes. Start Natively?`,
+            body: `"${event.title}" starts in 2 minutes. Start Glassnote?`,
             actions: [
                 { type: 'button', text: 'Start Meeting' },
                 { type: 'button', text: 'Dismiss' }

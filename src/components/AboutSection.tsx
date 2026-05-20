@@ -58,7 +58,7 @@ export const AboutSection: React.FC<AboutSectionProps> = () => {
         <div className="space-y-6 animated fadeIn pb-10">
             {/* Header */}
             <div>
-                <h3 className="text-lg font-bold text-text-primary mb-1">About Natively</h3>
+                <h3 className="text-lg font-bold text-text-primary mb-1">About Glassnote</h3>
                 <p className="text-sm text-text-secondary">Designed to be invisible, intelligent, and trusted.</p>
             </div>
 
@@ -88,7 +88,7 @@ export const AboutSection: React.FC<AboutSectionProps> = () => {
                             <div>
                                 <h5 className="text-sm font-bold text-text-primary mb-1">Auto-Calendar Sync</h5>
                                 <p className="text-xs text-text-secondary leading-relaxed">
-                                    Natively now securely connects to Google Calendar and Outlook to automatically pull context and prepare for your upcoming meetings.
+                                    Glassnote now securely connects to Google Calendar and Outlook to automatically pull context and prepare for your upcoming meetings.
                                 </p>
                             </div>
                         </div>
@@ -140,7 +140,7 @@ export const AboutSection: React.FC<AboutSectionProps> = () => {
 
             {/* Architecture Section */}
             <div>
-                <h4 className="text-xs font-bold text-text-tertiary uppercase tracking-wider mb-2 px-1">How Natively Works</h4>
+                <h4 className="text-xs font-bold text-text-tertiary uppercase tracking-wider mb-2 px-1">How Glassnote Works</h4>
                 <div className="bg-bg-item-surface rounded-xl border border-border-subtle overflow-hidden">
                     <div className="p-3 border-b border-border-subtle bg-bg-card/50">
                         <div className="flex items-start gap-4">
@@ -164,7 +164,7 @@ export const AboutSection: React.FC<AboutSectionProps> = () => {
                             <div>
                                 <h5 className="text-sm font-bold text-text-primary mb-1">Local RAG & Memory</h5>
                                 <p className="text-xs text-text-secondary leading-relaxed">
-                                    A purely local vector memory system allows Natively to recall details from past meetings. Embeddings and retrieval happen on-device via SQLite for maximum privacy.
+                                    A purely local vector memory system allows Glassnote to recall details from past meetings. Embeddings and retrieval happen on-device via SQLite for maximum privacy.
                                 </p>
                             </div>
                         </div>
@@ -190,7 +190,7 @@ export const AboutSection: React.FC<AboutSectionProps> = () => {
                         <div>
                             <h5 className="text-sm font-medium text-text-primary">No Recording</h5>
                             <p className="text-xs text-text-secondary mt-1 leading-relaxed">
-                                Natively listens only when active. It does not record video, take arbitrary screenshots without command, or perform background surveillance.
+                                Glassnote listens only when active. It does not record video, take arbitrary screenshots without command, or perform background surveillance.
                             </p>
                         </div>
                     </div>
@@ -216,8 +216,8 @@ export const AboutSection: React.FC<AboutSectionProps> = () => {
                             </div>
                         </div>
                         <a
-                            href="https://natively.software"
-                            onClick={(e) => handleOpenLink(e, "https://natively.software")}
+                            href="https://glassnote.software"
+                            onClick={(e) => handleOpenLink(e, "https://glassnote.software")}
                             className="whitespace-nowrap px-4 py-2 bg-text-primary hover:bg-white/90 text-bg-main text-xs font-bold rounded-lg transition-all shadow hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2"
                         >
                             <Globe size={14} />
@@ -240,14 +240,14 @@ export const AboutSection: React.FC<AboutSectionProps> = () => {
                                     <p className="text-xs text-text-secondary leading-relaxed max-w-lg">
                                         I build software that stays out of the way.
                                         <br />
-                                        <span className="font-bold text-text-primary">Natively</span> is made to feel fast, quiet, and respectful of your privacy.
+                                        <span className="font-bold text-text-primary">Glassnote</span> is made to feel fast, quiet, and respectful of your privacy.
                                     </p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-4 pl-[60px]">
                                 <a
-                                    href="https://github.com/Natively-AI-assistant/natively-cluely-ai-assistant"
-                                    onClick={(e) => handleOpenLink(e, "https://github.com/Natively-AI-assistant/natively-cluely-ai-assistant")}
+                                    href="https://github.com/Glassnote-AI-assistant/glassnote-cluely-ai-assistant"
+                                    onClick={(e) => handleOpenLink(e, "https://github.com/Glassnote-AI-assistant/glassnote-cluely-ai-assistant")}
                                     className="text-text-tertiary hover:text-text-primary transition-colors"
                                     title="GitHub"
                                 >
@@ -284,8 +284,8 @@ export const AboutSection: React.FC<AboutSectionProps> = () => {
                     {/* 2. Star & Report */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <a
-                            href="https://github.com/Natively-AI-assistant/natively-cluely-ai-assistant"
-                            onClick={(e) => handleOpenLink(e, "https://github.com/Natively-AI-assistant/natively-cluely-ai-assistant")}
+                            href="https://github.com/Glassnote-AI-assistant/glassnote-cluely-ai-assistant"
+                            onClick={(e) => handleOpenLink(e, "https://github.com/Glassnote-AI-assistant/glassnote-cluely-ai-assistant")}
                             className="bg-bg-item-surface border border-border-subtle rounded-xl p-5 transition-all group flex items-center gap-4 h-full hover:bg-white/10"
                         >
                             <div className="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center text-yellow-500 shrink-0 group-hover:scale-110 transition-transform">
@@ -293,13 +293,13 @@ export const AboutSection: React.FC<AboutSectionProps> = () => {
                             </div>
                             <div>
                                 <h5 className="text-sm font-bold text-text-primary">Star on GitHub</h5>
-                                <p className="text-xs text-text-secondary mt-0.5">Love Natively? Support us by starring the repo.</p>
+                                <p className="text-xs text-text-secondary mt-0.5">Love Glassnote? Support us by starring the repo.</p>
                             </div>
                         </a>
 
                         <a
-                            href="https://github.com/Natively-AI-assistant/natively-cluely-ai-assistant/issues"
-                            onClick={(e) => handleOpenLink(e, "https://github.com/Natively-AI-assistant/natively-cluely-ai-assistant/issues")}
+                            href="https://github.com/Glassnote-AI-assistant/glassnote-cluely-ai-assistant/issues"
+                            onClick={(e) => handleOpenLink(e, "https://github.com/Glassnote-AI-assistant/glassnote-cluely-ai-assistant/issues")}
                             className="bg-bg-item-surface border border-border-subtle rounded-xl p-5 transition-all group flex items-center gap-4 h-full hover:bg-white/10"
                         >
                             <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center text-red-500 shrink-0 group-hover:scale-110 transition-transform">
@@ -341,7 +341,7 @@ export const AboutSection: React.FC<AboutSectionProps> = () => {
                             </div>
                             <div>
                                 <h5 className="text-sm font-bold text-text-primary">Support Development</h5>
-                                <p className="text-xs text-text-secondary mt-0.5">Natively is independent open-source software.</p>
+                                <p className="text-xs text-text-secondary mt-0.5">Glassnote is independent open-source software.</p>
                             </div>
                         </div>
                         <a

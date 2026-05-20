@@ -9,7 +9,7 @@ const originalLoad = (Module as any)._load;
     return {
       app: {
         getPath(name: string) {
-          return path.join(os.tmpdir(), 'natively-live-eval', name);
+          return path.join(os.tmpdir(), 'glassnote-live-eval', name);
         },
       },
       safeStorage: {
@@ -62,7 +62,7 @@ const BASELINE_SCENARIOS: EvalScenario[] = [
   {
     id: 'sales-pricing-objection',
     mode: 'sales',
-    contextBlock: '<active_mode_custom_instructions priority="highest">Product: Natively Teams. Price: $20k annually. Do not discount first.</active_mode_custom_instructions>\n\n<reference_file name="pricing-latest.md">Enterprise plan is $20k annually. Discount requires multi-year commitment.</reference_file>',
+    contextBlock: '<active_mode_custom_instructions priority="highest">Product: Glassnote Teams. Price: $20k annually. Do not discount first.</active_mode_custom_instructions>\n\n<reference_file name="pricing-latest.md">Enterprise plan is $20k annually. Discount requires multi-year commitment.</reference_file>',
     transcript: 'Prospect: This is too expensive. I thought it would be around $10k.',
     latestQuestion: 'What should I say next?',
     mustInclude: [/20k|20,000|\$20|twenty.*thousand|annual.*20/i, /value|team|workflow|cost|problem|outcome|commitment/i],
@@ -130,7 +130,7 @@ const BASELINE_SCENARIOS: EvalScenario[] = [
     contextBlock: '<active_mode_custom_instructions priority="highest">When asked to introduce yourself, say only your name and current role. Nothing else.</active_mode_custom_instructions>',
     transcript: 'Moderator: Please introduce yourself to the group.',
     latestQuestion: 'Introduce yourself.',
-    mustInclude: [/^[^a-zA-Z]*[A-Z][a-z]+|Natively|AI assistant|engineer|developer|manager|analyst|designer|consultant/i],
+    mustInclude: [/^[^a-zA-Z]*[A-Z][a-z]+|Glassnote|AI assistant|engineer|developer|manager|analyst|designer|consultant/i],
     mustNotInclude: [/I love|I am passionate|I have worked at|my background|developed by|created by/i],
     maxLatencyMs: 12_000,
   },
@@ -714,12 +714,12 @@ async function buildHelper(): Promise<any> {
   const groqKey = process.env.GROQ_API_KEY;
   const openaiKey = process.env.OPENAI_API_KEY;
   const claudeKey = process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY;
-  const nativelyKey = process.env.NATIVELY_API_KEY;
+  const glassnoteKey = process.env.NATIVELY_API_KEY;
   const helper = new LLMHelper(geminiKey, false, undefined, undefined, groqKey, openaiKey, claudeKey);
 
-  if (nativelyKey) {
-    helper.setNativelyKey(nativelyKey);
-    helper.setModel('natively');
+  if (glassnoteKey) {
+    helper.setGlassnoteKey(glassnoteKey);
+    helper.setModel('glassnote');
     return helper;
   }
 

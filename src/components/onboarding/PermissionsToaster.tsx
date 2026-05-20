@@ -11,7 +11,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { X, Monitor, Mic, CheckCircle, AlertCircle, ExternalLink, ArrowRight } from 'lucide-react';
 
-const STORAGE_KEY  = 'natively_perms_shown_v1';
+const STORAGE_KEY  = 'glassnote_perms_shown_v1';
 const STARTUP_DELAY_MS = 1_400;
 
 // ─── Design tokens ────────────────────────────────────────────
@@ -183,7 +183,7 @@ export const PermissionsToaster: React.FC<Props> = ({ isOpen, onDismiss }) => {
               {/* Header */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '22px', paddingBottom: '16px', borderBottom: `1px solid ${T.rule}` }}>
                 <span style={{ fontSize: '10.5px', fontWeight: 660, letterSpacing: '0.14em', textTransform: 'uppercase', color: T.t2 }}>
-                  Natively · Permissions
+                  Glassnote · Permissions
                 </span>
                 <button onClick={handleDismiss} aria-label="Dismiss"
                   style={{ background: 'none', border: 'none', cursor: 'pointer', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', opacity: 0.35, padding: 0, transition: 'opacity 150ms, background 150ms' }}
@@ -201,7 +201,7 @@ export const PermissionsToaster: React.FC<Props> = ({ isOpen, onDismiss }) => {
                   </h2>
                   <p style={{ fontSize: '13px', lineHeight: 1.64, color: T.t3, margin: 0, maxWidth: '340px' }}>
                     {platform === 'darwin'
-                      ? 'Natively needs access to your screen and microphone to capture meetings and transcribe speech.'
+                      ? 'Glassnote needs access to your screen and microphone to capture meetings and transcribe speech.'
                       : 'Click "Allow" if Windows asks for microphone or screen access when you start a meeting.'}
                   </p>
                 </motion.div>

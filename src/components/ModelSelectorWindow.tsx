@@ -76,8 +76,8 @@ const ModelSelectorWindow = () => {
                 // Build the list
                 const models: ModelOption[] = [];
 
-                if (creds?.hasNativelyKey) {
-                    models.push({ id: 'natively', name: 'Natively API', type: 'cloud', provider: 'natively' });
+                if (creds?.hasGlassnoteKey) {
+                    models.push({ id: 'glassnote', name: 'Glassnote API', type: 'cloud', provider: 'glassnote' });
                 }
 
                 // Cloud Models — standard models + unique preferred models

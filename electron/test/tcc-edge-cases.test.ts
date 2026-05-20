@@ -8,7 +8,7 @@
  *   4. Dev mode bypass returns 'granted' without calling systemPreferences
  *
  * Run with:
- *   cd /Users/evin/natively-cluely-ai-assistant/electron
+ *   cd /Users/evin/glassnote-cluely-ai-assistant/electron
  *   npx tsx test/tcc-edge-cases.test.ts
  */
 

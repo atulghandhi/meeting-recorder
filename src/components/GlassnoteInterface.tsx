@@ -78,7 +78,7 @@ interface Message {
     };
 }
 
-interface NativelyInterfaceProps {
+interface GlassnoteInterfaceProps {
     onEndMeeting?: () => void;
     overlayOpacity?: number;
     interfaceTheme?: MeetingInterfaceTheme;
@@ -237,7 +237,7 @@ const MessageRow = React.memo(function MessageRow({
     prev.onCopy === next.onCopy
 );
 
-const NativelyInterface: React.FC<NativelyInterfaceProps> = ({
+const GlassnoteInterface: React.FC<GlassnoteInterfaceProps> = ({
     onEndMeeting,
     overlayOpacity = OVERLAY_OPACITY_DEFAULT,
     interfaceTheme = 'default',
@@ -264,11 +264,11 @@ const NativelyInterface: React.FC<NativelyInterfaceProps> = ({
     const [manualTranscript, setManualTranscript] = useState('');
     const manualTranscriptRef = useRef<string>('');
     const [showTranscript, setShowTranscript] = useState(() => {
-        const stored = localStorage.getItem('natively_interviewer_transcript');
+        const stored = localStorage.getItem('glassnote_interviewer_transcript');
         return stored !== 'false';
     });
     const [autoScroll, setAutoScroll] = useState(() => {
-        const stored = localStorage.getItem('natively_auto_scroll');
+        const stored = localStorage.getItem('glassnote_auto_scroll');
         return stored === 'true';
     });
 
@@ -278,7 +278,7 @@ const NativelyInterface: React.FC<NativelyInterfaceProps> = ({
     // Sync transcript setting
     useEffect(() => {
         const handleStorage = () => {
-            const stored = localStorage.getItem('natively_interviewer_transcript');
+            const stored = localStorage.getItem('glassnote_interviewer_transcript');
             setShowTranscript(stored !== 'false');
         };
         window.addEventListener('storage', handleStorage);
@@ -289,7 +289,7 @@ const NativelyInterface: React.FC<NativelyInterfaceProps> = ({
     // Sync auto-scroll setting
     useEffect(() => {
         const handleStorage = () => {
-            const stored = localStorage.getItem('natively_auto_scroll');
+            const stored = localStorage.getItem('glassnote_auto_scroll');
             setAutoScroll(stored === 'true');
         };
         window.addEventListener('storage', handleStorage);
@@ -368,7 +368,7 @@ const NativelyInterface: React.FC<NativelyInterfaceProps> = ({
     // Settings State with Persistence
     const [isUndetectable, setIsUndetectable] = useState(false);
     const [hideChatHidesWidget, setHideChatHidesWidget] = useState(() => {
-        const stored = localStorage.getItem('natively_hideChatHidesWidget');
+        const stored = localStorage.getItem('glassnote_hideChatHidesWidget');
         return stored ? stored === 'true' : true;
     });
 
@@ -575,8 +575,8 @@ const NativelyInterface: React.FC<NativelyInterfaceProps> = ({
 
     // Persist Settings
     useEffect(() => {
-        localStorage.setItem('natively_undetectable', String(isUndetectable));
-        localStorage.setItem('natively_hideChatHidesWidget', String(hideChatHidesWidget));
+        localStorage.setItem('glassnote_undetectable', String(isUndetectable));
+        localStorage.setItem('glassnote_hideChatHidesWidget', String(hideChatHidesWidget));
     }, [isUndetectable, hideChatHidesWidget]);
 
     // Mouse Passthrough State
@@ -919,7 +919,7 @@ const NativelyInterface: React.FC<NativelyInterfaceProps> = ({
     useEffect(() => {
         if (!window.electronAPI?.onSessionReset) return;
         const unsubscribe = window.electronAPI.onSessionReset(() => {
-            console.log('[NativelyInterface] Resetting session state...');
+            console.log('[GlassnoteInterface] Resetting session state...');
             setMessages([]);
             setInputValue('');
             setAttachedContext([]);
@@ -1768,7 +1768,7 @@ const NativelyInterface: React.FC<NativelyInterfaceProps> = ({
             setManualTranscript('');  // Clear live preview
 
             // Send manual finalization signal to STT Providers
-            window.electronAPI.finalizeMicSTT().catch(err => console.error('[NativelyInterface] Failed to send finalizeMicSTT:', err));
+            window.electronAPI.finalizeMicSTT().catch(err => console.error('[GlassnoteInterface] Failed to send finalizeMicSTT:', err));
 
             const currentAttachments = attachedContext;
             setAttachedContext([]); // Clear context immediately on send
@@ -2857,7 +2857,7 @@ Provide only the answer, nothing else.`;
     // mousedown anywhere in the overlay (opt-OUT via data-stealth-ignore).
     // That model broke hard: clicking the Settings button engaged the tap,
     // then Settings opened and the user couldn't type their API key (tap
-    // intercepted at OS level → keystrokes went to Natively's read-only
+    // intercepted at OS level → keystrokes went to Glassnote's read-only
     // chat input). Worse, every NEW button added to the overlay was a
     // regression risk — forgetting `data-stealth-ignore` re-introduced the
     // bug silently.
@@ -3284,7 +3284,7 @@ Provide only the answer, nothing else.`;
                                          data-stealth-ignore="true">
                                         <span className="overlay-text-primary flex-1">
                                             Stealth typing needs Accessibility access.
-                                            Grant it in System Settings, then restart Natively.
+                                            Grant it in System Settings, then restart Glassnote.
                                         </span>
                                         <button
                                             onClick={() => window.electronAPI.stealthTapOpenSettings()}
@@ -3486,4 +3486,4 @@ Provide only the answer, nothing else.`;
     );
 };
 
-export default NativelyInterface;
+export default GlassnoteInterface;

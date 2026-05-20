@@ -5,7 +5,7 @@ import {
     RefreshCw, CalendarClock, Trash2, ArrowUpRight, Info,
     Zap, Clock, Sparkles
 } from 'lucide-react';
-import { NativelyLogoMark } from '../NativelyLogoMark';
+import { GlassnoteLogoMark } from '../GlassnoteLogoMark';
 import { FreeTrialModal } from '../trial/FreeTrialModal';
 
 // ─── Types ───────────────────────────────────────────────────
@@ -118,7 +118,7 @@ function Card({ children, className = '' }: { children: React.ReactNode; classNa
 }
 
 // ─── Component ───────────────────────────────────────────────
-export const NativelyApiSettings: React.FC = () => {
+export const GlassnoteApiSettings: React.FC = () => {
     const [apiKey,         setApiKey]         = useState('');
     const [isSaved,        setIsSaved]        = useState(false);
     const [isLoading,      setIsLoading]      = useState(true);
@@ -149,8 +149,8 @@ export const NativelyApiSettings: React.FC = () => {
         (async () => {
             try {
                 const creds = await window.electronAPI.getStoredCredentials();
-                if (creds.hasNativelyKey) { setApiKey('•'.repeat(24)); setIsSaved(true); }
-            } catch (e) { console.error('[NativelyApi]', e); }
+                if (creds.hasGlassnoteKey) { setApiKey('•'.repeat(24)); setIsSaved(true); }
+            } catch (e) { console.error('[GlassnoteApi]', e); }
             finally { setIsLoading(false); }
         })();
     }, []);
@@ -159,7 +159,7 @@ export const NativelyApiSettings: React.FC = () => {
         setIsLoadingUsage(true);
         setUsageError(null);
         try {
-            const r = await window.electronAPI.getNativelyUsage();
+            const r = await window.electronAPI.getGlassnoteUsage();
             if (r.ok && r.quota) {
                 setUsageData(r as UsageData);
             } else {
@@ -183,7 +183,7 @@ export const NativelyApiSettings: React.FC = () => {
         const res = await window.electronAPI?.getTrialStatus?.();
         if (!res?.ok) return;
 
-        localStorage.setItem('natively_trial_claimed', 'true');
+        localStorage.setItem('glassnote_trial_claimed', 'true');
 
         setTrialState({
             active:    !(res.expired ?? false),
@@ -206,11 +206,11 @@ export const NativelyApiSettings: React.FC = () => {
             try {
                 const local = await window.electronAPI?.getLocalTrial?.();
                 if (!local?.hasToken) {
-                    if (local?.trialClaimed) localStorage.setItem('natively_trial_claimed', 'true');
+                    if (local?.trialClaimed) localStorage.setItem('glassnote_trial_claimed', 'true');
                     return;
                 }
 
-                localStorage.setItem('natively_trial_claimed', 'true');
+                localStorage.setItem('glassnote_trial_claimed', 'true');
 
                 if (local.expired) {
                     // Token exists but expired locally — show modal immediately, confirm via server
@@ -243,7 +243,7 @@ export const NativelyApiSettings: React.FC = () => {
             const res = await window.electronAPI?.startTrial?.();
             if (!res?.ok) {
                 if (res?.error === 'trial_ip_limit' || res?.error === 'trial_start_rate_limited') {
-                    localStorage.setItem('natively_trial_claimed', 'true');
+                    localStorage.setItem('glassnote_trial_claimed', 'true');
                     setTrialState({ active: false, expired: true, expiresAt: '', startedAt: '', usage: { ai: 0, stt_seconds: 0, search: 0 } });
                     return;
                 }
@@ -254,7 +254,7 @@ export const NativelyApiSettings: React.FC = () => {
                 return;
             }
 
-            localStorage.setItem('natively_trial_claimed', 'true');
+            localStorage.setItem('glassnote_trial_claimed', 'true');
 
             if (res.already_used && res.expired) {
                 setTrialState({ active: false, expired: true, expiresAt: '', startedAt: '', usage: { ai: 0, stt_seconds: 0, search: 0 } });
@@ -291,14 +291,14 @@ export const NativelyApiSettings: React.FC = () => {
         if (!apiKey.trim() || apiKey.includes('•')) return;
         setIsSaving(true); setError(null);
         try {
-            const r = await window.electronAPI.setNativelyApiKey(apiKey.trim());
+            const r = await window.electronAPI.setGlassnoteApiKey(apiKey.trim());
             if (r.success) {
                 setApiKey('•'.repeat(24)); setIsSaved(true); setJustSaved(true);
                 setTimeout(() => setJustSaved(false), 2500);
                 // @ts-ignore
-                window.electronAPI?.setDefaultModel?.('natively').catch(console.error);
+                window.electronAPI?.setDefaultModel?.('glassnote').catch(console.error);
                 // @ts-ignore
-                window.electronAPI?.setSttProvider?.('natively').catch(console.error);
+                window.electronAPI?.setSttProvider?.('glassnote').catch(console.error);
             } else { setError(r.error || 'Failed to save API key'); }
         } catch (e: any) { setError(e.message || 'Unexpected error'); }
         finally { setIsSaving(false); }
@@ -306,7 +306,7 @@ export const NativelyApiSettings: React.FC = () => {
 
     const handleClear = () => {
         setApiKey(''); setIsSaved(false); setError(null); setUsageData(null); setUsageError(null);
-        window.electronAPI.setNativelyApiKey('').catch(() => {});
+        window.electronAPI.setGlassnoteApiKey('').catch(() => {});
     };
 
     const openExternal = (url: string) => { (window.electronAPI as any)?.openExternal?.(url); };
@@ -321,7 +321,7 @@ export const NativelyApiSettings: React.FC = () => {
                 <div className="flex flex-col gap-2.5 mb-4">
                     <div className="flex items-center justify-between">
                         <p className="text-[10px] font-semibold text-text-tertiary uppercase tracking-widest">Choose a Plan</p>
-                        <span className="text-[10px] text-text-tertiary">Pro, Max &amp; Ultra include Natively Pro app</span>
+                        <span className="text-[10px] text-text-tertiary">Pro, Max &amp; Ultra include Glassnote Pro app</span>
                     </div>
                     <div className="w-full flex items-center justify-center py-2 bg-violet-500/10 border border-violet-500/20 rounded-[10px]">
                         <span className="text-[11.5px] font-medium text-violet-400/90">
@@ -442,7 +442,7 @@ export const NativelyApiSettings: React.FC = () => {
             {/* ── Page title ───────────────────────────────────── */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h3 className="text-[15px] font-semibold text-text-primary tracking-[-0.01em]">Natively API</h3>
+                    <h3 className="text-[15px] font-semibold text-text-primary tracking-[-0.01em]">Glassnote API</h3>
                     <p className="text-[12px] text-text-tertiary mt-0.5 leading-snug">
                         Managed transcription, AI &amp; search
                     </p>
@@ -472,10 +472,10 @@ export const NativelyApiSettings: React.FC = () => {
                 return (
                     <Card className="shadow-sm border-violet-500/25">
                         <div className="px-5 pt-5 pb-5 space-y-4">
-                            {/* Header — same layout as "Try Natively API free" start card */}
+                            {/* Header — same layout as "Try Glassnote API free" start card */}
                             <div className="flex items-start gap-3.5">
                                 <div className="w-10 h-10 rounded-[11px] bg-violet-500/10 border border-violet-500/20 flex items-center justify-center shrink-0">
-                                    <NativelyLogoMark size={18} className="text-violet-400" />
+                                    <GlassnoteLogoMark size={18} className="text-violet-400" />
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center justify-between">
@@ -510,7 +510,7 @@ export const NativelyApiSettings: React.FC = () => {
 
             {/* ── Free trial start card (no key, no active trial) ── */}
             {!isLoading && !isSaved && !isCheckingTrial && (!trialState || (trialState.expired && !trialState.active)) && (() => {
-                const isClaimed = trialState?.expired === true || localStorage.getItem('natively_trial_claimed') === 'true';
+                const isClaimed = trialState?.expired === true || localStorage.getItem('glassnote_trial_claimed') === 'true';
                 
                 if (isClaimed) {
                     return null;
@@ -521,10 +521,10 @@ export const NativelyApiSettings: React.FC = () => {
                         <div className="px-5 pt-5 pb-4 flex flex-col items-center justify-center text-center">
                             {/* Apple Promo Icon */}
                             <div className="w-[42px] h-[42px] mb-3 rounded-[12px] bg-bg-input border border-border-subtle shadow-[inset_0_1px_rgba(255,255,255,0.06),0_2px_8px_rgba(0,0,0,0.04)] flex items-center justify-center relative overflow-hidden">
-                                <NativelyLogoMark size={20} className={isClaimed ? "text-text-tertiary" : "text-text-primary drop-shadow-sm"} />
+                                <GlassnoteLogoMark size={20} className={isClaimed ? "text-text-tertiary" : "text-text-primary drop-shadow-sm"} />
                             </div>
                             
-                            <h3 className="text-[14.5px] font-bold text-text-primary tracking-tight mb-1">Natively API. Try it free.</h3>
+                            <h3 className="text-[14.5px] font-bold text-text-primary tracking-tight mb-1">Glassnote API. Try it free.</h3>
                             <p className="text-[12px] text-text-secondary leading-snug px-4 mb-4">
                                 Experience managed text-to-speech, AI models, and real-time research without a subscription.
                             </p>
@@ -597,12 +597,12 @@ export const NativelyApiSettings: React.FC = () => {
                 <div className="flex items-center gap-3 px-5 pt-5 pb-4">
                     {/* Tinted icon well — Apple style */}
                     <div className="w-9 h-9 rounded-xl bg-blue-500/15 border border-blue-500/20 flex items-center justify-center shrink-0">
-                        <NativelyLogoMark size={18} className="text-blue-400" />
+                        <GlassnoteLogoMark size={18} className="text-blue-400" />
                     </div>
                     <div className="min-w-0">
                         <p className="text-[13px] font-semibold text-text-primary">API Key</p>
                         <p className="text-[11px] text-text-tertiary leading-snug mt-0.5">
-                            Your Natively API key from your subscription email
+                            Your Glassnote API key from your subscription email
                         </p>
                     </div>
                 </div>
@@ -632,7 +632,7 @@ export const NativelyApiSettings: React.FC = () => {
                         value={apiKey}
                         onChange={e => { setApiKey(e.target.value); setIsSaved(false); setError(null); }}
                         onKeyDown={e => e.key === 'Enter' && handleSave()}
-                        placeholder="natively_api_..."
+                        placeholder="glassnote_api_..."
                         spellCheck={false}
                         autoComplete="off"
                         className={`w-full bg-bg-input border rounded-xl px-3.5 py-2.5 text-[13px] font-mono text-text-primary
@@ -684,7 +684,7 @@ export const NativelyApiSettings: React.FC = () => {
                     <p className="text-[10.5px] text-text-tertiary leading-relaxed text-center">
                         By saving your key, you agree to our{' '}
                         <span
-                            onClick={() => openExternal('https://natively.software/nativelyapi/t&c')}
+                            onClick={() => openExternal('https://glassnote.software/glassnoteapi/t&c')}
                             className="text-text-secondary hover:text-text-primary underline decoration-border-subtle underline-offset-[3px] cursor-pointer transition-colors"
                         >
                             Terms &amp; Conditions
@@ -775,7 +775,7 @@ export const NativelyApiSettings: React.FC = () => {
                             How it works
                         </p>
                         <button
-                            onClick={() => openExternal('https://natively.software/pro')}
+                            onClick={() => openExternal('https://glassnote.software/pro')}
                             className="flex items-center gap-1 text-[10px] font-semibold text-blue-400 hover:text-blue-300 uppercase tracking-widest transition-colors cursor-pointer"
                         >
                             Watch Demo <ArrowUpRight size={10} strokeWidth={2} />
@@ -785,7 +785,7 @@ export const NativelyApiSettings: React.FC = () => {
                         {[
                             { step: '1', text: 'Subscribe above and complete checkout on Dodo Payments.' },
                             { step: '2', text: 'Your API key is emailed instantly to your inbox.'        },
-                            { step: '3', text: 'Paste it here — Natively handles the rest automatically.' },
+                            { step: '3', text: 'Paste it here — Glassnote handles the rest automatically.' },
                         ].map(({ step, text }) => (
                             <div key={step} className="flex items-start gap-3">
                                 <div className="w-5 h-5 rounded-full bg-bg-input border border-border-subtle flex items-center justify-center text-[10px] font-bold text-text-tertiary shrink-0 mt-[1px]">
@@ -818,7 +818,7 @@ export const NativelyApiSettings: React.FC = () => {
                     <div className="space-y-3">
                         <div className="rounded-xl bg-bg-input/50 border border-border-subtle px-3.5 py-3">
                             <p className="text-[11.5px] text-text-secondary leading-relaxed">
-                                <strong className="text-text-primary font-semibold">A quick heads-up:</strong> Natively is built and maintained by a single developer and integrates a lot of third-party services — AI providers, transcription engines, search APIs, payments, OS-level audio &amp; screen capture. That gives the app a lot of capability, but the surface area is wider than a typical closed-source product, and once in a while something may not behave exactly as expected. If you run into something like that, please <em>report it</em> rather than disputing the charge — we read every report and fixes typically land in the next update.
+                                <strong className="text-text-primary font-semibold">A quick heads-up:</strong> Glassnote is built and maintained by a single developer and integrates a lot of third-party services — AI providers, transcription engines, search APIs, payments, OS-level audio &amp; screen capture. That gives the app a lot of capability, but the surface area is wider than a typical closed-source product, and once in a while something may not behave exactly as expected. If you run into something like that, please <em>report it</em> rather than disputing the charge — we read every report and fixes typically land in the next update.
                             </p>
                         </div>
 
@@ -834,17 +834,17 @@ export const NativelyApiSettings: React.FC = () => {
                         <p className="text-[11.5px] text-text-secondary leading-relaxed">
                             For everything else — the 24-hour refund window, subscription handling, taxes &amp; fees, and your local consumer rights — please see our full{' '}
                             <span
-                                onClick={() => openExternal('https://natively.software/refundpolicy')}
+                                onClick={() => openExternal('https://glassnote.software/refundpolicy')}
                                 className="text-text-primary hover:text-text-secondary underline decoration-border-subtle underline-offset-[3px] cursor-pointer transition-colors"
                             >
                                 Refund Policy
                             </span>
                             . To request a refund or ask a question, email{' '}
                             <span
-                                onClick={() => openExternal('mailto:natively.contact@gmail.com')}
+                                onClick={() => openExternal('mailto:glassnote.contact@gmail.com')}
                                 className="text-text-primary hover:text-text-secondary underline decoration-border-subtle underline-offset-[3px] cursor-pointer transition-colors"
                             >
-                                natively.contact@gmail.com
+                                glassnote.contact@gmail.com
                             </span>
                             .
                         </p>

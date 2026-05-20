@@ -1,14 +1,14 @@
 /**
- * Sentinel value stored in `nativelyApiKey` while a free trial is active.
+ * Sentinel value stored in `glassnoteApiKey` while a free trial is active.
  *
- * The trial token (`natively_trial_…`) is *not* a valid API key, but the
- * downstream code (LLMHelper, NativelyProSTT, ipcHandlers) needs to treat
+ * The trial token (`glassnote_trial_…`) is *not* a valid API key, but the
+ * downstream code (LLMHelper, GlassnoteProSTT, ipcHandlers) needs to treat
  * "trial mode" identically to "key mode" for routing/auto-promotion. We store
- * this sentinel in CredentialsManager so the existing `if (nativelyApiKey)`
+ * this sentinel in CredentialsManager so the existing `if (glassnoteApiKey)`
  * branches all light up, then swap the auth header to `x-trial-token` at the
  * actual network boundary.
  *
- * Any place that reads `nativelyApiKey` and forwards it to the network MUST
+ * Any place that reads `glassnoteApiKey` and forwards it to the network MUST
  * compare against TRIAL_SENTINEL_KEY (not the literal '__trial__') so a single
  * rename here updates every call site.
  */

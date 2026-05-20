@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react" // forcing refresh
 import { QueryClient, QueryClientProvider } from "react-query"
 import { ToastProvider, ToastViewport } from "./components/ui/toast"
-import NativelyInterface from "./components/NativelyInterface"
+import GlassnoteInterface from "./components/GlassnoteInterface"
 import SettingsPopup from "./components/SettingsPopup" // Keeping for legacy/specific window support if needed
 import Launcher from "./components/Launcher"
 import ModelSelectorWindow from "./components/ModelSelectorWindow"
@@ -10,7 +10,7 @@ import StartupSequence from "./components/StartupSequence"
 import { AnimatePresence, motion } from "framer-motion"
 import UpdateBanner from "./components/UpdateBanner"
 import { SupportToaster } from "./components/SupportToaster"
-import { NativelyQuotaBanner } from "./components/NativelyQuotaBanner"
+import { GlassnoteQuotaBanner } from "./components/GlassnoteQuotaBanner"
 import { FreeTrialBanner }      from "./components/trial/FreeTrialBanner"
 import { FreeTrialModal }       from "./components/trial/FreeTrialModal"
 import { TrialPromoToaster }    from "./components/trial/TrialPromoToaster"
@@ -24,7 +24,7 @@ import {
   PremiumPromoToaster,
   RemoteCampaignToaster,
   PremiumUpgradeModal,
-  NativelyApiPromoToaster,
+  GlassnoteApiPromoToaster,
   MaxUltraUpgradeToaster,
   useAdCampaigns
 } from './premium'
@@ -93,7 +93,7 @@ const App: React.FC = () => {
   // future code flips the flag), it never appears again on subsequent launches.
   const [showStartup, setShowStartup] = useState<boolean>(() => {
     try {
-      return localStorage.getItem('natively_seen_startup_v1') !== 'true';
+      return localStorage.getItem('glassnote_seen_startup_v1') !== 'true';
     } catch {
       return true;
     }
@@ -126,7 +126,7 @@ const App: React.FC = () => {
   // Overlay opacity — only meaningful when isOverlayWindow, but stored centrally
   // so it can be initialized once from localStorage and updated via IPC.
   const [overlayOpacity, setOverlayOpacity] = useState<number>(() => {
-    const stored = localStorage.getItem('natively_overlay_opacity');
+    const stored = localStorage.getItem('glassnote_overlay_opacity');
     const parsed = stored ? parseFloat(stored) : NaN;
     // Treat missing value or the old default (0.65) as "not user-set"
     const isUserSet = Number.isFinite(parsed) && parsed !== OVERLAY_OPACITY_DEFAULT;
@@ -153,7 +153,7 @@ const App: React.FC = () => {
   const [incompatibleWarning, setIncompatibleWarning] = useState<{count: number; oldProvider: string; newProvider: string} | null>(null);
   
   // API check
-  const [hasNativelyApi, setHasNativelyApi] = useState<boolean>(false);
+  const [hasGlassnoteApi, setHasGlassnoteApi] = useState<boolean>(false);
 
   // ── Onboarding / promo toasters ───────────────────────────
   const [showPermissionsToaster, setShowPermissionsToaster] = useState(false);
@@ -174,7 +174,7 @@ const App: React.FC = () => {
     appStartTime,
     lastMeetingEndTime,
     isProcessingMeeting,
-    hasNativelyApi
+    hasGlassnoteApi
   );
 
   // Preview shortcuts — Ctrl/Cmd+Shift+1-5 force-show any ad card.
@@ -183,7 +183,7 @@ const App: React.FC = () => {
     const CODE_MAP: Record<string, string> = {
       'Digit1': 'max_ultra_upgrade',
       'Digit2': 'promo',
-      'Digit3': 'natively_api',
+      'Digit3': 'glassnote_api',
       'Digit4': 'profile',
       'Digit5': 'jd',
     };
@@ -225,9 +225,9 @@ const App: React.FC = () => {
         }
       });
 
-    // Also check for Natively API key
+    // Also check for Glassnote API key
     window.electronAPI?.getStoredCredentials?.()
-      .then((creds) => setHasNativelyApi(!!creds?.hasNativelyKey))
+      .then((creds) => setHasGlassnoteApi(!!creds?.hasGlassnoteKey))
       .catch(() => {});
 
     // ── Trial: check stored token and start polling if active ──
@@ -278,7 +278,7 @@ const App: React.FC = () => {
 
     // ── Onboarding toasters ──────────────────────────────────
     if (isLauncherWindow || isDefault) {
-      const permsShown = localStorage.getItem('natively_perms_shown_v1');
+      const permsShown = localStorage.getItem('glassnote_perms_shown_v1');
       if (!permsShown) {
         // First ever launch — show permissions toaster
         setShowPermissionsToaster(true);
@@ -359,7 +359,7 @@ const App: React.FC = () => {
   useEffect(() => {
     if (!isOverlayWindow || !window.electronAPI?.onThemeChanged) return;
     return window.electronAPI.onThemeChanged(() => {
-      const stored = localStorage.getItem('natively_overlay_opacity');
+      const stored = localStorage.getItem('glassnote_overlay_opacity');
       if (!stored) {
         setOverlayOpacity(getDefaultOverlayOpacity());
       }
@@ -383,7 +383,7 @@ const App: React.FC = () => {
 
   const handleStartMeeting = async () => {
     try {
-      localStorage.setItem('natively_last_meeting_start', Date.now().toString());
+      localStorage.setItem('glassnote_last_meeting_start', Date.now().toString());
       const inputDeviceId = localStorage.getItem('preferredInputDeviceId');
       let outputDeviceId = localStorage.getItem('preferredOutputDeviceId');
       const useExperimentalSck = localStorage.getItem('useExperimentalSckBackend') === 'true';
@@ -419,14 +419,14 @@ const App: React.FC = () => {
     setIsProcessingMeeting(true);
 
     // Local bookkeeping that does not depend on the main process.
-    const startStr = localStorage.getItem('natively_last_meeting_start');
+    const startStr = localStorage.getItem('glassnote_last_meeting_start');
     if (startStr) {
       const duration = Date.now() - parseInt(startStr, 10);
       const threshold = import.meta.env.DEV ? 10000 : 180000;
       if (duration >= threshold) {
-        localStorage.setItem('natively_show_profile_toaster', 'true');
+        localStorage.setItem('glassnote_show_profile_toaster', 'true');
       }
-      localStorage.removeItem('natively_last_meeting_start');
+      localStorage.removeItem('glassnote_last_meeting_start');
     }
 
     // Fire-and-forget: main's endMeeting() handler now performs the
@@ -489,7 +489,7 @@ const App: React.FC = () => {
                   transition: 'background-color 75ms ease, border-color 75ms ease, box-shadow 75ms ease'
                 } as React.CSSProperties}
               >
-                <NativelyInterface
+                <GlassnoteInterface
                   onEndMeeting={handleEndMeeting}
                   overlayOpacity={overlayOpacity}
                   interfaceTheme={meetingInterfaceTheme}
@@ -516,7 +516,7 @@ const App: React.FC = () => {
             exit={{ opacity: 0, scale: 1.1, pointerEvents: "none", transition: { duration: 0.6, ease: "easeInOut" } }}
           >
             <StartupSequence onComplete={() => {
-              try { localStorage.setItem('natively_seen_startup_v1', 'true'); } catch {}
+              try { localStorage.setItem('glassnote_seen_startup_v1', 'true'); } catch {}
               setShowStartup(false);
             }} />
           </motion.div>
@@ -581,7 +581,7 @@ const App: React.FC = () => {
                         }}
                         className="w-[820px] h-[600px] max-w-[95vw] max-h-[90vh] rounded-2xl overflow-hidden border border-white/10 bg-[#141414]"
                       >
-                        <ModesSettings onClose={() => setIsModesOpen(false)} isPremium={isPremiumActive} isLoaded={hasLoadedLicense} isTrialActive={!!activeTrial} onOpenNativelyAPI={() => openSettingsExclusive('natively-api')} />
+                        <ModesSettings onClose={() => setIsModesOpen(false)} isPremium={isPremiumActive} isLoaded={hasLoadedLicense} isTrialActive={!!activeTrial} onOpenGlassnoteAPI={() => openSettingsExclusive('glassnote-api')} />
                       </motion.div>
                     </motion.div>
                   )}
@@ -668,7 +668,7 @@ const App: React.FC = () => {
 
       <UpdateBanner />
       <SupportToaster />
-      <NativelyQuotaBanner />
+      <GlassnoteQuotaBanner />
 
 
 
@@ -685,7 +685,7 @@ const App: React.FC = () => {
       <PermissionsToaster
         isOpen={showPermissionsToaster}
         onDismiss={() => {
-          localStorage.setItem('natively_perms_shown_v1', '1');
+          localStorage.setItem('glassnote_perms_shown_v1', '1');
           setShowPermissionsToaster(false);
           // After permissions, allow trial promo on next launch
         }}
@@ -694,7 +694,7 @@ const App: React.FC = () => {
       {/* Trial promo toaster — 5s after restart (self-gates via localStorage + conditions) */}
       <TrialPromoToaster
         isOpen={showTrialPromo}
-        hasNativelyKey={hasNativelyApi}
+        hasGlassnoteKey={hasGlassnoteApi}
         hasTrialToken={!!activeTrial}
         onDismiss={() => setShowTrialPromo(false)}
         onStartTrial={async () => {
@@ -733,9 +733,9 @@ const App: React.FC = () => {
       {/* Ad toasters — render whenever activeAd is set (isLauncherMainView guard bypassed
           when triggered via preview shortcut so the card always surfaces) */}
       {(isLauncherMainView || !!activeAd) && !isSettingsOpen && (
-        <NativelyApiPromoToaster
-          isOpen={activeAd === 'natively_api'}
-          onDismiss={() => dismissAd('natively_api')}
+        <GlassnoteApiPromoToaster
+          isOpen={activeAd === 'glassnote_api'}
+          onDismiss={() => dismissAd('glassnote_api')}
           onOpenSettings={(tab: string) => openSettingsExclusive(tab)}
         />
       )}

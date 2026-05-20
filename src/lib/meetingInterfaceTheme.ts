@@ -1,6 +1,6 @@
 export type MeetingInterfaceTheme = 'default' | 'liquid-glass';
 
-const STORAGE_KEY = 'natively_meeting_interface_theme';
+const STORAGE_KEY = 'glassnote_meeting_interface_theme';
 
 export function getMeetingInterfaceTheme(): MeetingInterfaceTheme {
     return (localStorage.getItem(STORAGE_KEY) as MeetingInterfaceTheme) || 'default';

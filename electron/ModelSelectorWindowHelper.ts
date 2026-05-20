@@ -190,8 +190,8 @@ export class ModelSelectorWindowHelper {
 
         this.window.once('ready-to-show', () => {
             // Apply NSPanel stealth attributes BEFORE any show() so clicking
-            // the model selector on the Natively overlay doesn't activate
-            // Natively and dim the user's foreground app (Zoom/browser) mid
+            // the model selector on the Glassnote overlay doesn't activate
+            // Glassnote and dim the user's foreground app (Zoom/browser) mid
             // meeting. Without this, model-switch was a regular focusable
             // window and every interaction stole focus. Failure non-fatal.
             //

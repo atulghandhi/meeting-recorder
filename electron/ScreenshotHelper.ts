@@ -40,7 +40,7 @@ function assertScreenRecordingPermission(): void {
     case 'denied':
       throw new Error(
         'Screen Recording permission is denied. Enable it in System Settings > ' +
-        'Privacy & Security > Screen Recording, then restart Natively.'
+        'Privacy & Security > Screen Recording, then restart Glassnote.'
       );
     case 'restricted':
       throw new Error(
@@ -54,7 +54,7 @@ function assertScreenRecordingPermission(): void {
       // appears behind other apps on macOS Sequoia). Tell the user to restart instead.
       throw new Error(
         'Screen Recording permission has not been granted yet. ' +
-        'Please restart Natively — you will be prompted to grant access on next launch.'
+        'Please restart Glassnote — you will be prompted to grant access on next launch.'
       );
   }
 }

@@ -8,7 +8,7 @@ const SettingsPopup = () => {
     const isLightTheme = useResolvedTheme() === 'light';
     const [isUndetectable, setIsUndetectable] = useState(false);
     const [useGroqFastText, setUseGroqFastText] = useState(() => {
-        return localStorage.getItem('natively_groq_fast_text') === 'true';
+        return localStorage.getItem('glassnote_groq_fast_text') === 'true';
     });
     const [profileMode, setProfileMode] = useState(false);
     const [hasProfile, setHasProfile] = useState(false);
@@ -29,7 +29,7 @@ const SettingsPopup = () => {
                     groq: !!creds.hasGroqKey,
                     openai: !!creds.hasOpenaiKey,
                     claude: !!creds.hasClaudeKey,
-                    natively: !!creds.hasNativelyKey
+                    glassnote: !!creds.hasGlassnoteKey
                 });
             }
         } catch (e) {
@@ -77,7 +77,7 @@ const SettingsPopup = () => {
         if (window.electronAPI?.onUndetectableChanged) {
             const unsubscribe = window.electronAPI.onUndetectableChanged((newState: boolean) => {
                 setIsUndetectable(newState);
-                localStorage.setItem('natively_undetectable', String(newState));
+                localStorage.setItem('glassnote_undetectable', String(newState));
             });
             return () => unsubscribe();
         }
@@ -88,7 +88,7 @@ const SettingsPopup = () => {
         if (window.electronAPI?.onGroqFastTextChanged) {
             const unsubscribe = window.electronAPI.onGroqFastTextChanged((enabled: boolean) => {
                 setUseGroqFastText(enabled);
-                localStorage.setItem('natively_groq_fast_text', String(enabled));
+                localStorage.setItem('glassnote_groq_fast_text', String(enabled));
             });
             return () => unsubscribe();
         }
@@ -109,7 +109,7 @@ const SettingsPopup = () => {
         }
 
         // Apply Groq Text Mode
-        localStorage.setItem('natively_groq_fast_text', String(useGroqFastText));
+        localStorage.setItem('glassnote_groq_fast_text', String(useGroqFastText));
         try {
             // @ts-ignore - electronAPI not typed in this file yet
             window.electronAPI?.invoke('set-groq-fast-text-mode', useGroqFastText);
@@ -121,13 +121,13 @@ const SettingsPopup = () => {
     const [actionButtonMode, setActionButtonModeState] = useState<'recap' | 'brainstorm'>('recap');
 
     const [showTranscript, setShowTranscript] = useState(() => {
-        const stored = localStorage.getItem('natively_interviewer_transcript');
+        const stored = localStorage.getItem('glassnote_interviewer_transcript');
         return stored !== 'false'; // Default to true if not set
     });
 
     useEffect(() => {
         const handleStorage = () => {
-            const stored = localStorage.getItem('natively_interviewer_transcript');
+            const stored = localStorage.getItem('glassnote_interviewer_transcript');
             setShowTranscript(stored !== 'false');
         };
 
@@ -209,7 +209,7 @@ const SettingsPopup = () => {
                         onClick={() => {
                             const newState = !isUndetectable;
                             setIsUndetectable(newState);
-                            localStorage.setItem('natively_undetectable', String(newState));
+                            localStorage.setItem('glassnote_undetectable', String(newState));
                             window.electronAPI?.setUndetectable(newState);
                         }}
                         className={`w-[30px] h-[18px] rounded-full p-[1.5px] transition-all duration-300 ease-spring active:scale-[0.92] ${isUndetectable
@@ -221,8 +221,8 @@ const SettingsPopup = () => {
                 </div>
 
 
-                {/* Groq (Fast Text) Toggle — enabled with Groq key OR Natively API key */}
-                <div className={`flex items-center justify-between px-3 py-2 rounded-lg transition-colors duration-200 group ${!(hasStoredKey.groq || hasStoredKey.natively) ? 'opacity-50 grayscale cursor-not-allowed' : `${itemHoverClass} cursor-default`}`} title={!(hasStoredKey.groq || hasStoredKey.natively) ? "Requires Groq or Natively API key" : ""}>
+                {/* Groq (Fast Text) Toggle — enabled with Groq key OR Glassnote API key */}
+                <div className={`flex items-center justify-between px-3 py-2 rounded-lg transition-colors duration-200 group ${!(hasStoredKey.groq || hasStoredKey.glassnote) ? 'opacity-50 grayscale cursor-not-allowed' : `${itemHoverClass} cursor-default`}`} title={!(hasStoredKey.groq || hasStoredKey.glassnote) ? "Requires Groq or Glassnote API key" : ""}>
                     <div className="flex items-center gap-3">
                         <Zap
                             className={`w-4 h-4 transition-colors ${useGroqFastText ? 'text-orange-500' : iconInactiveClass}`}
@@ -232,11 +232,11 @@ const SettingsPopup = () => {
                     </div>
                     <button
                         onClick={() => {
-                            if (!(hasStoredKey.groq || hasStoredKey.natively)) return;
+                            if (!(hasStoredKey.groq || hasStoredKey.glassnote)) return;
                             setUseGroqFastText(!useGroqFastText);
                         }}
                         className={`w-[30px] h-[18px] rounded-full p-[1.5px] transition-all duration-300 ease-spring active:scale-[0.92] ${useGroqFastText ? 'bg-orange-500 shadow-[0_2px_10px_rgba(249,115,22,0.3)]' : defaultToggleTrackClass}`}
-                        disabled={!(hasStoredKey.groq || hasStoredKey.natively)}
+                        disabled={!(hasStoredKey.groq || hasStoredKey.glassnote)}
                     >
                         <div className={`w-[15px] h-[15px] rounded-full transition-transform duration-300 ease-spring ${toggleKnobClass} ${useGroqFastText ? 'translate-x-[12px]' : 'translate-x-0'}`} />
                     </button>
@@ -255,7 +255,7 @@ const SettingsPopup = () => {
                         onClick={() => {
                             const newState = !showTranscript;
                             setShowTranscript(newState);
-                            localStorage.setItem('natively_interviewer_transcript', String(newState));
+                            localStorage.setItem('glassnote_interviewer_transcript', String(newState));
                             // Dispatch event for same-window listeners
                             window.dispatchEvent(new Event('storage'));
                         }}
@@ -330,7 +330,7 @@ const SettingsPopup = () => {
 
                 <div className={`h-px my-0.5 mx-2 ${dividerClass}`} />
 
-                {/* Show/Hide Natively */}
+                {/* Show/Hide Glassnote */}
                 <div className={`flex items-center justify-between px-3 py-2 rounded-lg transition-colors duration-200 group interaction-base interaction-press ${itemHoverClass}`}>
                     <div className="flex items-center gap-3">
                         <MessageSquare className={`w-3.5 h-3.5 transition-colors ${iconInactiveClass}`} />

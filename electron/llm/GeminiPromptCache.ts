@@ -136,7 +136,7 @@ export class GeminiPromptCache {
           contents: [{ role: 'user', parts: [{ text: '_' }] }],
           systemInstruction: { parts: [{ text: systemPrompt }] },
           ttl: `${CACHE_TTL_SECONDS}s`,
-          displayName: `natively-sys-${key.slice(0, 8)}`,
+          displayName: `glassnote-sys-${key.slice(0, 8)}`,
         },
       });
       const name: string | undefined = response?.name;

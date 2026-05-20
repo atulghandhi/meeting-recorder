@@ -26,7 +26,7 @@ let _logFile: string | null = null;
 const getLogFile = (): string | null => {
   if (_logFile) return _logFile;
   try {
-    _logFile = path.join(app.getPath('documents'), 'natively_debug.log');
+    _logFile = path.join(app.getPath('documents'), 'glassnote_debug.log');
     return _logFile;
   } catch {
     // app.ready not yet fired — return null, logToFile will skip silently
@@ -165,14 +165,14 @@ import { DeepgramStreamingSTT } from "./audio/DeepgramStreamingSTT"
 import { SonioxStreamingSTT } from "./audio/SonioxStreamingSTT"
 import { ElevenLabsStreamingSTT } from "./audio/ElevenLabsStreamingSTT"
 import { OpenAIStreamingSTT } from "./audio/OpenAIStreamingSTT"
-import { NativelyProSTT } from "./audio/NativelyProSTT"
+import { GlassnoteProSTT } from "./audio/GlassnoteProSTT"
 import { ThemeManager } from "./ThemeManager"
 import { RAGManager } from "./rag/RAGManager"
 import { DatabaseManager } from "./db/DatabaseManager"
 import { warmupIntentClassifier } from "./llm"
 
 /** Unified type for all STT providers with optional extended capabilities */
-type STTProvider = (GoogleSTT | RestSTT | DeepgramStreamingSTT | SonioxStreamingSTT | ElevenLabsStreamingSTT | OpenAIStreamingSTT | NativelyProSTT) & {
+type STTProvider = (GoogleSTT | RestSTT | DeepgramStreamingSTT | SonioxStreamingSTT | ElevenLabsStreamingSTT | OpenAIStreamingSTT | GlassnoteProSTT) & {
   finalize?: () => void;
   setAudioChannelCount?: (count: number) => void;
   notifySpeechEnded?: () => void;
@@ -254,7 +254,7 @@ export class AppState {
   // (and only the transcript handler) treats `isMeetingActive || _isDraining`
   // as "accept trailing finals" — every other call site looks at
   // `isMeetingActive` alone, which flips to false synchronously on Stop so the
-  // launcher's "Meeting ongoing" pill switches back to "Start Natively" the
+  // launcher's "Meeting ongoing" pill switches back to "Start Glassnote" the
   // instant the user clicks Stop, with no 250 ms green-→-blue stutter.
   private _isDraining: boolean = false;
   // Tracks remembered output device so reconfigureAudio can no-op when nothing changed.
@@ -881,7 +881,7 @@ export class AppState {
     // Workaround: Open the folder containing the downloaded update so user can install manually
     if (process.platform === 'darwin') {
       try {
-        // Get the downloaded update file path (e.g., .../Natively-1.0.9-mac.zip)
+        // Get the downloaded update file path (e.g., .../Glassnote-1.0.9-mac.zip)
         const updateFile = (autoUpdater as any).downloadedUpdateHelper?.file
         console.log('[AutoUpdater] Downloaded update file:', updateFile)
 
@@ -962,17 +962,17 @@ export class AppState {
 
     let stt: STTProvider;
 
-    if (sttProvider === 'natively') {
-      const nativelyKey = CredentialsManager.getInstance().getNativelyApiKey();
-      if (!nativelyKey) {
-        // Natively is Coming Soon — no key means degrade gracefully like every other provider
-        console.warn(`[Main] No Natively API Key configured for ${speaker}, falling back to GoogleSTT`);
+    if (sttProvider === 'glassnote') {
+      const glassnoteKey = CredentialsManager.getInstance().getGlassnoteApiKey();
+      if (!glassnoteKey) {
+        // Glassnote is Coming Soon — no key means degrade gracefully like every other provider
+        console.warn(`[Main] No Glassnote API Key configured for ${speaker}, falling back to GoogleSTT`);
         stt = new GoogleSTT(speaker);
       } else {
         // 'system' for interviewer (system audio), 'mic' for user (microphone).
         // The server uses ${key}:${channel} as the session key so both streams
         // can coexist without triggering concurrent_session_blocked.
-        stt = new NativelyProSTT(nativelyKey, speaker === 'interviewer' ? 'system' : 'mic');
+        stt = new GlassnoteProSTT(glassnoteKey, speaker === 'interviewer' ? 'system' : 'mic');
       }
     } else if (sttProvider === 'deepgram') {
       const apiKey = CredentialsManager.getInstance().getDeepgramApiKey();
@@ -1205,10 +1205,10 @@ export class AppState {
       }
     });
 
-    // Auto language detection: NativelyProSTT emits 'languageDetected' when the
+    // Auto language detection: GlassnoteProSTT emits 'languageDetected' when the
     // backend resolves the language from the first audio batch. Notify the renderer
     // so the settings UI can show what was detected.
-    if (stt instanceof NativelyProSTT) {
+    if (stt instanceof GlassnoteProSTT) {
       stt.on('languageDetected', (bcp47: string) => {
         console.log(`[Main] STT language auto-detected (${speaker}): ${bcp47}`);
         const helper = this.getWindowHelper();
@@ -1216,7 +1216,7 @@ export class AppState {
         helper.getLauncherWindow()?.webContents.send('stt-language-auto-detected', bcp47);
       });
 
-      // Persistent-reconnect signal: NativelyProSTT now retries indefinitely
+      // Persistent-reconnect signal: GlassnoteProSTT now retries indefinitely
       // with a 30s backoff cap, but we want the user to know after ~5 attempts
       // (~30–90s of dead transcript) that the issue is sustained, not a blip.
       // Reuse the stt-status channel with state='reconnecting' and a higher
@@ -1381,7 +1381,7 @@ export class AppState {
           console.warn(`${prefix}SystemAudio chunks all zero-filled for ${ZEROFILL_OBSERVATION_MS / 1000}s — TCC denial suspected (Screen Recording grant may not apply to this binary).`);
           this.broadcast('audio-capture-failed', {
             channel: 'system',
-            message: 'System audio is being captured but every sample is silent. This usually means macOS Screen Recording permission needs to be re-granted to this build of Natively. Open System Settings → Privacy & Security → Screen Recording, toggle Natively off and back on, then restart the app. (If you recently rebuilt or updated, the previous grant may not apply.)',
+            message: 'System audio is being captured but every sample is silent. This usually means macOS Screen Recording permission needs to be re-granted to this build of Glassnote. Open System Settings → Privacy & Security → Screen Recording, toggle Glassnote off and back on, then restart the app. (If you recently rebuilt or updated, the previous grant may not apply.)',
             attempt: 0,
             maxAttempts: 3,
             terminal: false,
@@ -1487,7 +1487,7 @@ export class AppState {
           console.warn(`${prefix}Mic chunks all zero-filled for ${ZEROFILL_OBSERVATION_MS / 1000}s — TCC denial or device-mute suspected.`);
           this.broadcast('audio-capture-failed', {
             channel: 'mic',
-            message: 'Your microphone is connected but every audio sample is silent. Check that (1) macOS Microphone permission is granted to Natively in System Settings → Privacy & Security → Microphone, (2) your input device is unmuted in the menu bar, and (3) no other app is holding the mic in exclusive mode.',
+            message: 'Your microphone is connected but every audio sample is silent. Check that (1) macOS Microphone permission is granted to Glassnote in System Settings → Privacy & Security → Microphone, (2) your input device is unmuted in the menu bar, and (3) no other app is holding the mic in exclusive mode.',
             attempt: 0,
             maxAttempts: 3,
             terminal: false,
@@ -2546,7 +2546,7 @@ export class AppState {
         // auto-open System Settings. Forcing that window open every meeting start
         // is extremely disruptive, especially when mic transcription is still working.
         // The UI will show a non-blocking banner; the user can fix it deliberately.
-        const message = 'Screen Recording permission denied. System audio will not be captured. To fix: System Settings → Privacy & Security → Screen Recording → enable Natively.';
+        const message = 'Screen Recording permission denied. System audio will not be captured. To fix: System Settings → Privacy & Security → Screen Recording → enable Glassnote.';
         console.warn('[Main]', message);
         this.broadcast('system-audio-permission-denied', message);
         // NOTE: Do NOT call shell.openExternal() here — it hijacks focus on every meeting
@@ -2650,7 +2650,7 @@ export class AppState {
     // ─── UX STATE FLIP — SYNCHRONOUS ───────────────────────────────────────
     // Flip the UX-facing meeting flag to false RIGHT NOW and broadcast. The
     // launcher's "Meeting ongoing" pill subscribes to meeting-state-changed,
-    // so this guarantees the pill reverts to "Start Natively" the moment the
+    // so this guarantees the pill reverts to "Start Glassnote" the moment the
     // user clicks Stop — no green→blue flash if they click Start again before
     // the 250 ms STT drain finishes. The transcript handler keys off
     // `_isDraining` instead so trailing finals are still accepted.
@@ -2992,9 +2992,9 @@ export class AppState {
     const { CredentialsManager } = require('./services/CredentialsManager');
     CredentialsManager.getInstance().setSttLanguage(key);
 
-    // 'auto' is only meaningful for NativelyProSTT — other providers fall back to en-US.
+    // 'auto' is only meaningful for GlassnoteProSTT — other providers fall back to en-US.
     const sttProvider = CredentialsManager.getInstance().getSttProvider();
-    const effectiveKey = (key === 'auto' && sttProvider !== 'natively') ? 'english-us' : key;
+    const effectiveKey = (key === 'auto' && sttProvider !== 'glassnote') ? 'english-us' : key;
 
     this.googleSTT?.setRecognitionLanguage(effectiveKey);
     this.googleSTT_User?.setRecognitionLanguage(effectiveKey);
@@ -3351,7 +3351,7 @@ export class AppState {
     trayIcon.setTemplateImage(iconToUse.endsWith('Template.png'));
 
     this.tray = new Tray(trayIcon)
-    this.tray.setToolTip('Natively') // This tooltip might also need update if we change global shortcut, but global shortcut is removed.
+    this.tray.setToolTip('Glassnote') // This tooltip might also need update if we change global shortcut, but global shortcut is removed.
     this.updateTrayMenu();
 
     // Double-click to show window
@@ -3369,7 +3369,7 @@ export class AppState {
     console.log('[Main] updateTrayMenu called. Screenshot Accelerator:', screenshotAccel);
 
     // Update tooltip for verification
-    this.tray.setToolTip('Natively');
+    this.tray.setToolTip('Glassnote');
 
     // Helper to format accelerator for display (e.g. CommandOrControl+H -> Cmd+H)
     const formatAccel = (accel: string) => {
@@ -3389,7 +3389,7 @@ export class AppState {
 
     const contextMenu = Menu.buildFromTemplate([
       {
-        label: 'Show Natively',
+        label: 'Show Glassnote',
         click: () => {
           this.centerAndShowWindow()
         }
@@ -3517,10 +3517,10 @@ export class AppState {
         }
 
         if (settled) {
-          // Capture whether Natively is currently the frontmost app BEFORE
+          // Capture whether Glassnote is currently the frontmost app BEFORE
           // dock.hide() — that call triggers an implicit macOS app-deactivation
           // which shifts keyboard focus to the next frontmost app (Chrome, etc.).
-          const nativelyWasFocused =
+          const glassnoteWasFocused =
             targetFocusWindow != null &&
             !targetFocusWindow.isDestroyed() &&
             targetFocusWindow.isFocused();
@@ -3529,12 +3529,12 @@ export class AppState {
           app.dock.hide();
           this.hideTray();
 
-          // If Natively was the focused window when the user toggled stealth,
+          // If Glassnote was the focused window when the user toggled stealth,
           // restore focus to our window after dock.hide() so macOS does not
           // hand control to Chrome / whatever is behind us.
           // We use win.focus() (not app.focus()) to avoid the heavy-handed
           // [NSApp activateIgnoringOtherApps:YES] side-effect.
-          if (nativelyWasFocused && targetFocusWindow && !targetFocusWindow.isDestroyed()) {
+          if (glassnoteWasFocused && targetFocusWindow && !targetFocusWindow.isDestroyed()) {
             targetFocusWindow.focus();
           }
         } else {
@@ -3616,7 +3616,7 @@ export class AppState {
   }
 
   private _applyDisguise(mode: 'terminal' | 'settings' | 'activity' | 'none'): void {
-    let appName = "Natively";
+    let appName = "Glassnote";
     let iconPath = "";
 
     const isWin = process.platform === 'win32';
@@ -3660,11 +3660,11 @@ export class AppState {
         }
         break;
       case 'none':
-        appName = "Natively";
+        appName = "Glassnote";
         if (isMac) {
           iconPath = app.isPackaged
-            ? path.join(process.resourcesPath, "natively.icns")
-            : path.join(app.getAppPath(), "assets/natively.icns");
+            ? path.join(process.resourcesPath, "glassnote.icns")
+            : path.join(app.getAppPath(), "assets/glassnote.icns");
         } else if (isWin) {
           iconPath = app.isPackaged
             ? path.join(process.resourcesPath, "assets/icons/win/icon.ico")
@@ -3696,7 +3696,7 @@ export class AppState {
     // 3. Update App User Model ID (Windows Taskbar grouping)
     if (isWin) {
       // Use unique AUMID per disguise to avoid grouping with the real app
-      app.setAppUserModelId(`com.natively.assistant.${mode}`);
+      app.setAppUserModelId(`com.glassnote.assistant.${mode}`);
     }
 
     // 4. Update Icons
@@ -3802,7 +3802,7 @@ async function initializeApp() {
   }
 
   // When a duplicate launch is attempted (e.g. user invokes Spotlight again
-  // while Natively is running), focus and recenter the existing window so the
+  // while Glassnote is running), focus and recenter the existing window so the
   // launch is visibly handled instead of silently absorbed.
   app.on('second-instance', () => {
     try {
@@ -3938,7 +3938,7 @@ async function initializeApp() {
   // One-time macOS screen recording permission prompt.
   //
   // We must fire this AFTER createWindow() so that:
-  //   1. The Natively launcher window is visible and focused when the TCC dialog
+  //   1. The Glassnote launcher window is visible and focused when the TCC dialog
   //      appears — macOS anchors the dialog to the frontmost app window on Ventura+.
   //      Without a visible window the dialog can appear behind other apps (Sequoia).
   //   2. In stealth/undetectable mode the dock icon is hidden, but the window is
@@ -3988,7 +3988,7 @@ async function initializeApp() {
             if (!win.isDestroyed()) {
               win.webContents.send(
                 'system-audio-permission-denied',
-                'Screen Recording is disabled. System audio capture will not work. Click "Open Settings" to enable it, then restart Natively.'
+                'Screen Recording is disabled. System audio capture will not work. Click "Open Settings" to enable it, then restart Glassnote.'
               );
             }
           });

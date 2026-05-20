@@ -31,9 +31,9 @@ export interface StoredCredentials {
     customProviders?: CustomProvider[];
     curlProviders?: CurlProvider[];
     defaultModel?: string;
-    nativelyApiKey?: string;
+    glassnoteApiKey?: string;
     // STT Provider settings
-    sttProvider?: 'none' | 'google' | 'groq' | 'openai' | 'deepgram' | 'elevenlabs' | 'azure' | 'ibmwatson' | 'soniox' | 'natively' | 'local-whisper';
+    sttProvider?: 'none' | 'google' | 'groq' | 'openai' | 'deepgram' | 'elevenlabs' | 'azure' | 'ibmwatson' | 'soniox' | 'glassnote' | 'local-whisper';
     groqSttApiKey?: string;
     groqSttModel?: string;
     openAiSttApiKey?: string;
@@ -57,7 +57,7 @@ export interface StoredCredentials {
     openaiPreferredModel?: string;
     claudePreferredModel?: string;
     // Free trial state
-    trialToken?: string;   // server-issued signed token (natively_trial_…)
+    trialToken?: string;   // server-issued signed token (glassnote_trial_…)
     trialExpiresAt?: string;   // ISO timestamp — local copy for startup check
     trialStartedAt?: string;   // ISO timestamp
     trialClaimed?: boolean;  // set true on first claim, never cleared — hides start card permanently
@@ -115,16 +115,16 @@ export class CredentialsManager {
         return this.credentials.customProviders || [];
     }
 
-    public getSttProvider(): 'none' | 'google' | 'groq' | 'openai' | 'deepgram' | 'elevenlabs' | 'azure' | 'ibmwatson' | 'soniox' | 'natively' | 'local-whisper' {
+    public getSttProvider(): 'none' | 'google' | 'groq' | 'openai' | 'deepgram' | 'elevenlabs' | 'azure' | 'ibmwatson' | 'soniox' | 'glassnote' | 'local-whisper' {
         const provider = this.credentials.sttProvider || 'none';
-        // Self-heal: if provider is 'none' but a Natively key exists, the user is in a
+        // Self-heal: if provider is 'none' but a Glassnote key exists, the user is in a
         // broken state (key cleared then re-entered via a path that skipped auto-promote,
-        // or credentials restored from backup). Silently restore to 'natively' so STT works.
-        if (provider === 'none' && this.credentials.nativelyApiKey) {
-            this.credentials.sttProvider = 'natively';
+        // or credentials restored from backup). Silently restore to 'glassnote' so STT works.
+        if (provider === 'none' && this.credentials.glassnoteApiKey) {
+            this.credentials.sttProvider = 'glassnote';
             this.saveCredentials();
-            console.log('[CredentialsManager] Self-healed sttProvider: none→natively (Natively key present)');
-            return 'natively';
+            console.log('[CredentialsManager] Self-healed sttProvider: none→glassnote (Glassnote key present)');
+            return 'glassnote';
         }
         return provider;
     }
@@ -188,8 +188,8 @@ export class CredentialsManager {
         return this.credentials.defaultModel || 'gemini-3.1-flash-lite-preview';
     }
 
-    public getNativelyApiKey(): string | undefined {
-        return this.credentials.nativelyApiKey;
+    public getGlassnoteApiKey(): string | undefined {
+        return this.credentials.glassnoteApiKey;
     }
 
     public getAllCredentials(): StoredCredentials {
@@ -230,7 +230,7 @@ export class CredentialsManager {
         console.log('[CredentialsManager] Google Service Account path updated');
     }
 
-    public setSttProvider(provider: 'none' | 'google' | 'groq' | 'openai' | 'deepgram' | 'elevenlabs' | 'azure' | 'ibmwatson' | 'soniox' | 'natively' | 'local-whisper'): void {
+    public setSttProvider(provider: 'none' | 'google' | 'groq' | 'openai' | 'deepgram' | 'elevenlabs' | 'azure' | 'ibmwatson' | 'soniox' | 'glassnote' | 'local-whisper'): void {
         this.credentials.sttProvider = provider;
         this.saveCredentials();
         console.log(`[CredentialsManager] STT Provider set to: ${provider}`);
@@ -329,12 +329,12 @@ export class CredentialsManager {
         console.log(`[CredentialsManager] Default Model set to: ${model}`);
     }
 
-    public setNativelyApiKey(key: string): void {
+    public setGlassnoteApiKey(key: string): void {
         const trimmed = key.trim();
-        this.credentials.nativelyApiKey = trimmed || undefined;
+        this.credentials.glassnoteApiKey = trimmed || undefined;
 
         if (trimmed) {
-            // Auto-promote natively to default model unless user already chose a non-Gemini/Groq model
+            // Auto-promote glassnote to default model unless user already chose a non-Gemini/Groq model
             const current = this.credentials.defaultModel || '';
             const isAutoDefault = !current
                 || current.startsWith('gemini-')
@@ -344,29 +344,29 @@ export class CredentialsManager {
                 || current === 'gemini'
                 || current === 'llama';
             if (isAutoDefault) {
-                this.credentials.defaultModel = 'natively';
-                console.log('[CredentialsManager] Auto-set default model to natively');
+                this.credentials.defaultModel = 'glassnote';
+                console.log('[CredentialsManager] Auto-set default model to glassnote');
             }
 
-            // Auto-promote natively STT if still on 'none' or the default Google STT
+            // Auto-promote glassnote STT if still on 'none' or the default Google STT
             if (!this.credentials.sttProvider || this.credentials.sttProvider === 'none' || this.credentials.sttProvider === 'google') {
-                this.credentials.sttProvider = 'natively';
-                console.log('[CredentialsManager] Auto-set STT provider to natively');
+                this.credentials.sttProvider = 'glassnote';
+                console.log('[CredentialsManager] Auto-set STT provider to glassnote');
             }
         } else {
-            // Key cleared — revert natively-auto-set defaults back to safe fallbacks
-            if (this.credentials.defaultModel === 'natively') {
+            // Key cleared — revert glassnote-auto-set defaults back to safe fallbacks
+            if (this.credentials.defaultModel === 'glassnote') {
                 this.credentials.defaultModel = 'gemini-3.1-flash-lite-preview';
-                console.log('[CredentialsManager] Natively key cleared — reset default model to Gemini Flash');
+                console.log('[CredentialsManager] Glassnote key cleared — reset default model to Gemini Flash');
             }
-            if (this.credentials.sttProvider === 'natively') {
+            if (this.credentials.sttProvider === 'glassnote') {
                 this.credentials.sttProvider = 'none';
-                console.log('[CredentialsManager] Natively key cleared — reset STT provider to none');
+                console.log('[CredentialsManager] Glassnote key cleared — reset STT provider to none');
             }
         }
 
         this.saveCredentials();
-        console.log('[CredentialsManager] Natively API Key updated');
+        console.log('[CredentialsManager] Glassnote API Key updated');
     }
 
     public getPreferredModel(provider: 'gemini' | 'groq' | 'openai' | 'claude'): string | undefined {

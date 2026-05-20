@@ -12,7 +12,7 @@
  * CommonJS, which means TypeScript rewrites `import()` to `require()`.
  * We bypass this by loading the package through `new Function(...)` so
  * the compiler never sees the import expression and Node.js handles it
- * natively as a true dynamic ESM import at runtime.
+ * glassnote as a true dynamic ESM import at runtime.
  */
 import { parentPort } from 'worker_threads';
 

@@ -12,7 +12,7 @@
  * components that are testable in isolation.
  *
  * Run with:
- *   cd /Users/evin/natively-cluely-ai-assistant/electron
+ *   cd /Users/evin/glassnote-cluely-ai-assistant/electron
  *   node --require tsx/dist/register test/memory-leak-long-session.test.ts
  */
 

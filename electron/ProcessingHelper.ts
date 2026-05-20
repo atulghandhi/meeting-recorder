@@ -79,10 +79,10 @@ export class ProcessingHelper {
       this.llmHelper.setClaudeApiKey(claudeKey);
     }
 
-    const nativelyKey = credManager.getNativelyApiKey();
-    if (nativelyKey) {
-      console.log("[ProcessingHelper] Loading stored Natively API Key from CredentialsManager");
-      this.llmHelper.setNativelyKey(nativelyKey);
+    const glassnoteKey = credManager.getGlassnoteApiKey();
+    if (glassnoteKey) {
+      console.log("[ProcessingHelper] Loading stored Glassnote API Key from CredentialsManager");
+      this.llmHelper.setGlassnoteKey(glassnoteKey);
     }
 
     // CRITICAL: Re-initialize IntelligenceManager now that keys are loaded

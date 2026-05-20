@@ -7,7 +7,7 @@ import interFont from '../font/Inter-4.1/web/Inter-Medium.woff2?url';
 import interLightFont from '../font/Inter-4.1/web/Inter-Light.woff2?url';
 
 import heroVideo from '../assets/hero.webm';
-import NativelyInterfaceCard from './NativelyInterfaceCard';
+import GlassnoteInterfaceCard from './GlassnoteInterfaceCard';
 
 interface StartupSequenceProps {
     onComplete: () => void;
@@ -145,7 +145,7 @@ const StartupSequence: React.FC<StartupSequenceProps> = ({ onComplete }) => {
                             fontWeight: 500
                         }}
                     >
-                        Welcome to Natively
+                        Welcome to Glassnote
                     </motion.h1>
 
                     <motion.p
@@ -185,14 +185,14 @@ const StartupSequence: React.FC<StartupSequenceProps> = ({ onComplete }) => {
                     <p className="text-[12px] opacity-60 mb-6 text-center" style={{ color: '#a7a7ad' }}>
                         By clicking Continue, you agree to our{' '}
                         <span
-                            onClick={() => (window.electronAPI as any)?.openExternal?.('https://natively.software/termsandconditions')}
+                            onClick={() => (window.electronAPI as any)?.openExternal?.('https://glassnote.software/termsandconditions')}
                             className="font-semibold text-[#2f2f34] underline underline-offset-[3px] decoration-[#2f2f34]/30 hover:decoration-[#2f2f34]/70 cursor-pointer transition-colors"
                         >
                             Terms &amp; Conditions
                         </span>
                         {' '}and{' '}
                         <span
-                            onClick={() => (window.electronAPI as any)?.openExternal?.('https://natively.software/privacy')}
+                            onClick={() => (window.electronAPI as any)?.openExternal?.('https://glassnote.software/privacy')}
                             className="font-semibold text-[#2f2f34] underline underline-offset-[3px] decoration-[#2f2f34]/30 hover:decoration-[#2f2f34]/70 cursor-pointer transition-colors"
                         >
                             Privacy Policy
@@ -227,7 +227,7 @@ const StartupSequence: React.FC<StartupSequenceProps> = ({ onComplete }) => {
                 {/* 2. Content layers — stacked vertically, card overlaps video top */}
                 <div className="relative z-10 w-full flex flex-col items-center justify-center px-8" style={{ paddingBottom: '80px' }}>
 
-                    {/* A. NativelyInterfaceCard — slightly wider, on top */}
+                    {/* A. GlassnoteInterfaceCard — slightly wider, on top */}
                     <motion.div
                         initial={{ opacity: 0, y: -12 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -235,7 +235,7 @@ const StartupSequence: React.FC<StartupSequenceProps> = ({ onComplete }) => {
                         className="relative w-[95%] drop-shadow-[0_24px_48px_rgba(0,0,0,0.25)]"
                         style={{ zIndex: 2 }}
                     >
-                        <NativelyInterfaceCard isStatic={true} isMobile={false} spreadHotkeys />
+                        <GlassnoteInterfaceCard isStatic={true} isMobile={false} spreadHotkeys />
                     </motion.div>
 
                     {/* B. Hero Video — slightly narrower, below; negative margin to overlap under card */}
