@@ -15,8 +15,12 @@ Linked docs:
 
 ### ✅ Done
 - Public client repo pushed: `atulghandhi/meeting-recorder` (rebrand + docs commits live).
+- Private BE repo pushed: `atulghandhi/glassnote-backend`.
 - Supabase project identified: **santaswitch** (id `hgzacqveqrccnvjwumkz`, region us-east-1). Glassnote tables live in `glassnote.*` schema — coexist with SantaSwitch's tables in `public.*`. 7 tables created via MCP.
-- Local `.env` in `../glassnote-api/` populated with Resend, Sentry, Axiom, PostHog, and freshly-generated crypto salts.
+- Local `.env` in `../glassnote-api/` populated with Resend, Sentry, Axiom, PostHog, Supabase service role, Gemini, and freshly-generated crypto salts.
+- **Full string rebrand** (Natively → Glassnote) committed across 84 files in client. Component files renamed. Typecheck clean.
+- **Pricing locked:** Glassnote Pro $20/mo, 30-min HWID-bound trial, soft fair-use cap raised to $3/day (`PER_USER_DAILY_CENTS=300`), 14-day refund.
+- **WEBSITE_SPEC.md** written — full marketing-site build spec for a coding agent.
 - Apple Developer ID in hand.
 
 ### ⚠️ Still needed before BE can actually run
