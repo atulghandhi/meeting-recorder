@@ -3786,6 +3786,39 @@ export class AppState {
 // Application initialization
 
 async function initializeApp() {
+  // 0. Register the glassnote:// protocol handler and the macOS open-url
+  // listener BEFORE requesting the single-instance lock. On Windows/Linux,
+  // when the user clicks the magic link while the app is closed, the OS
+  // passes the URL through process.argv to a new instance; that new instance
+  // then fails to acquire the lock and forwards argv to the existing instance
+  // via the second-instance event. The protocol must already be registered
+  // for the OS to pick this app as the URL target in the first place.
+  const {
+    registerMagicLinkProtocol,
+    handleMagicLinkUrl,
+    findMagicLinkInArgv,
+  } = require('./services/MagicLinkHandler');
+  registerMagicLinkProtocol();
+
+  // macOS delivers the URL via 'open-url' event regardless of cold/warm.
+  // This must be registered before whenReady() resolves — on a cold start
+  // the event can fire before the app is ready, and Electron will queue it
+  // for us only if a listener is already attached.
+  app.on('open-url', (event, url) => {
+    event.preventDefault();
+    handleMagicLinkUrl(url, {
+      onSuccess: () => {
+        try {
+          AppState.getInstance().centerAndShowWindow();
+        } catch (err) {
+          // App might not be fully initialized yet on cold start — the
+          // credential is already stored; the window will pick it up.
+          console.warn('[Main] open-url onSuccess centerAndShowWindow:', err);
+        }
+      },
+    });
+  });
+
   // 1. Enforce single instance — prevent duplicate dock icons from leftover processes.
   // In development mode with hot-reload this is still safe because electron is restarted
   // by the build step, not re-launched by concurrently while the old process is alive.
@@ -3802,12 +3835,19 @@ async function initializeApp() {
   }
 
   // When a duplicate launch is attempted (e.g. user invokes Spotlight again
-  // while Glassnote is running), focus and recenter the existing window so the
-  // launch is visibly handled instead of silently absorbed.
-  app.on('second-instance', () => {
+  // while Glassnote is running, OR a Windows/Linux magic-link click), focus
+  // and recenter the existing window so the launch is visibly handled.
+  // If the second-instance argv carries a glassnote:// URL, apply it.
+  app.on('second-instance', (_event, argv) => {
     try {
-      const appState = AppState.getInstance();
-      appState.centerAndShowWindow();
+      const url = findMagicLinkInArgv(argv);
+      if (url) {
+        handleMagicLinkUrl(url, {
+          onSuccess: () => AppState.getInstance().centerAndShowWindow(),
+        });
+      } else {
+        AppState.getInstance().centerAndShowWindow();
+      }
     } catch (err) {
       console.error('[Main] second-instance handler failed:', err);
     }
@@ -3833,6 +3873,19 @@ async function initializeApp() {
   // This fixes the issue where keys (especially in production) aren't loaded in time for RAG/LLM
   const { CredentialsManager } = require('./services/CredentialsManager');
   CredentialsManager.getInstance().init();
+
+  // 3a. Cold-start magic-link handoff (Windows/Linux).
+  // On these platforms a click of glassnote://... that launches the app from
+  // cold passes the URL through process.argv. macOS uses the open-url event
+  // registered above instead; for safety we still scan argv on macOS too —
+  // it's a no-op there.
+  const coldStartUrl = findMagicLinkInArgv(process.argv);
+  if (coldStartUrl) {
+    handleMagicLinkUrl(coldStartUrl);
+    // No centerAndShowWindow here — the rest of initializeApp() creates the
+    // window normally a few lines below, which will then read the stored
+    // credentials via loadStoredCredentials().
+  }
 
   // 4. Initialize State
   const appState = AppState.getInstance()
