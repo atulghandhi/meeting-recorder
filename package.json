@@ -26,6 +26,7 @@
     "generateUpdatesFilesForAllChannels": true,
     "appId": "site.glassnote.app",
     "afterPack": "./scripts/ad-hoc-sign.js",
+    "afterSign": "./scripts/notarize.js",
     "productName": "Glassnote",
     "files": [
       "dist",
@@ -78,8 +79,11 @@
         }
       ],
       "icon": "assets/natively.icns",
-      "identity": null,
-      "hardenedRuntime": false,
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "assets/entitlements.mac.plist",
+      "entitlementsInherit": "assets/entitlements.mac.plist",
+      "notarize": false,
       "extendInfo": {
         "NSScreenCaptureUsageDescription": "Glassnote needs Screen Recording permission to capture system audio for meeting transcription.",
         "NSMicrophoneUsageDescription": "Glassnote needs microphone access to transcribe your voice during meetings."
