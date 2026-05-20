@@ -111,9 +111,9 @@ Sourced from [AUDIT.md](AUDIT.md). Most items live in `natively-api/server.js` w
 Code is in **`../glassnote-api/`** (sibling directory, private repo — initialize separately with `cd ../glassnote-api && git init`). Detailed plan: [BACKEND.md](BACKEND.md). High-level:
 
 - [x] **Week 1** — Fly config, Supabase migrations, magic-link auth, `/v1/me`, `/v1/trial/*`, `/v1/usage`, Lemon webhook, `/v1/transcribe` 503 stub. Typechecks cleanly. **Not yet deployed** — needs accounts + secrets (see "Your turn" below).
-- [ ] **Week 2** — `/v1/chat` with Gemini SSE pass-through, per-turn Axiom telemetry, IntentClassifier integration.
-- [ ] **Week 3** — Lemon Squeezy product + checkout URL swap on client, subscriptions enforcement, per-user daily $ ceiling, global circuit breaker (Redis).
-- [ ] **Week 4** — Groq fallback path, `/v1/embed`, PostHog events, security checklist sweep ([BACKEND.md](BACKEND.md) §13).
+- [x] **Week 2** — `/v1/chat` SSE pass-through with Gemini primary + Groq fallback, dual-header auth (`x-glassnote-key` / `x-trial-token`), per-turn Axiom telemetry (TTFT, tokens, cost), quota gate (per-user $3/day + global $50/day circuit breaker), cost estimator, Gemini connection prewarm at boot. Typechecks cleanly. Pushed to `atulghandhi/glassnote-backend` `046bbca`.
+- [ ] **Week 3** — Lemon Squeezy product + checkout URL swap on client, subscriptions enforcement, Redis-backed circuit breaker (multi-instance), client-side `glassnote://` protocol handler for magic-link redirect.
+- [ ] **Week 4** — `/v1/embed`, PostHog events, security checklist sweep ([BACKEND.md](BACKEND.md) §13), Apple notarization, deploy to Fly + DNS cutover.
 - [ ] **Week 5** — Closed beta with 10–20 invited users.
 - [ ] **Week 6+** — Open launch. Ship [LATENCY.md](LATENCY.md) A–C before paid traffic ramps.
 
